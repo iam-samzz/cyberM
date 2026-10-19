@@ -96,18 +96,33 @@ ul { list-style: none; }
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.5px;
-  display: flex; align-items: center; gap: 8px;
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
   cursor: pointer;
+  flex-shrink: 0;
+  height: 100%; /* Ensures it takes full height of the navbar */
+  text-decoration: none;
 }
 .nav-brand span { color: var(--accent); }
-.nav-brand .brand-icon {
-  width: 30px; height: 30px;
-  background: var(--accent);
-  border-radius: 7px;
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 14px; font-weight: 700;
+
+/* Brand Logo styles */
+/* Brand Logo styles */
+.brand-logo {
+  height: 40px; /* Increased from 32px to look more prominent */
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  display: block;
 }
-.nav-links { display: flex; align-items: center; gap: 4px; }
+
+.nav-links { 
+  display: flex; 
+  align-items: center; 
+  gap: 4px; 
+  margin-left: 40px; /* Adds breathing room between logo and Home button */
+}
+
 .nav-links a {
   color: var(--text-secondary);
   font-size: 0.875rem;
@@ -121,7 +136,7 @@ ul { list-style: none; }
   color: var(--text-primary);
   background: var(--accent-dim);
 }
-.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-right { display: flex; align-items: center; gap: 12px; margin-left: auto; flex-shrink: 0; }
 
 .theme-toggle {
   width: 40px; height: 40px;
@@ -1521,6 +1536,8 @@ ul { list-style: none; }
   }
   .nav-brand { font-size: 1.15rem; gap: 6px; }
   .nav-brand .brand-icon { width: 26px; height: 26px; font-size: 12px; }
+  .brand-logo { height: 32px; max-width: 130px; } /* Slightly smaller for mobile */
+  .nav-links { margin-left: 0; } /* Reset margin on mobile so the dropdown works correctly */
   .nav-right { gap: 8px; }
   .theme-toggle,
   .hamburger {

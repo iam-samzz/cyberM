@@ -639,7 +639,7 @@ const coursesData = {
     category: "Network Scanner",
     level: "Beginner",
     description: "Learn network discovery, port scanning, OS detection, and the Nmap Scripting Engine from scratch.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 15m",
     lessons: [
       { id: "nmap-1", title: "What is Nmap & Why It Matters", duration: "08:20", videoUrl: null },
@@ -659,7 +659,7 @@ const coursesData = {
     category: "Web Security Testing",
     level: "Intermediate",
     description: "Master web application testing with Burp Suite — proxy, intruder, repeater, scanner, and collaborator.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "3h 10m",
     lessons: [
       { id: "burp-1", title: "Burp Suite Architecture Overview", duration: "10:15", videoUrl: null },
@@ -679,7 +679,7 @@ const coursesData = {
     category: "Exploitation Framework",
     level: "Intermediate",
     description: "Learn exploit modules, payloads, auxiliary scanners, and post-exploitation using MSFconsole.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 50m",
     lessons: [
       { id: "msf-1", title: "Metasploit Architecture & Setup", duration: "09:30", videoUrl: null },
@@ -699,7 +699,7 @@ const coursesData = {
     category: "Packet Analyzer",
     level: "Beginner",
     description: "Capture and analyze network traffic. Master filters, protocol inspection, and troubleshooting.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 05m",
     lessons: [
       { id: "wsh-1", title: "Wireshark Interface & Installation", duration: "08:45", videoUrl: null },
@@ -719,7 +719,7 @@ const coursesData = {
     category: "SIEM Platform",
     level: "Intermediate",
     description: "Build SIEM dashboards, write SPL queries, and detect threats using Splunk in a SOC context.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 40m",
     lessons: [
       { id: "spl-1", title: "Splunk Architecture Overview", duration: "09:15", videoUrl: null },
@@ -739,7 +739,7 @@ const coursesData = {
     category: "Password Recovery",
     level: "Advanced",
     description: "GPU-accelerated password cracking with Hashcat. Attack modes, hash types, and rule-based attacks.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 20m",
     lessons: [
       { id: "hsh-1", title: "Hashcat Setup & GPU Configuration", duration: "10:10", videoUrl: null },
@@ -759,7 +759,7 @@ const coursesData = {
     category: "Password Cracker",
     level: "Intermediate",
     description: "Open-source password auditing with John the Ripper. Dictionary attacks, rules, and incremental mode.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "1h 50m",
     lessons: [
       { id: "jtr-1", title: "John the Ripper Overview", duration: "08:30", videoUrl: null },
@@ -779,7 +779,7 @@ const coursesData = {
     category: "IDS/IPS",
     level: "Intermediate",
     description: "Deploy and configure open-source intrusion detection/prevention systems with custom rules.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 00m",
     lessons: [
       { id: "snt-1", title: "IDS vs IPS Concepts", duration: "09:10", videoUrl: null },
@@ -799,7 +799,7 @@ const coursesData = {
     category: "Memory Forensics",
     level: "Advanced",
     description: "Analyze RAM dumps for incident response. Extract processes, injected code, and network artifacts.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 30m",
     lessons: [
       { id: "vol-1", title: "Memory Forensics Fundamentals", duration: "10:20", videoUrl: null },
@@ -819,7 +819,7 @@ const coursesData = {
     category: "Reverse Engineering",
     level: "Advanced",
     description: "NSA's open-source reverse engineering suite. Disassemble, decompile, and analyze binaries.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 45m",
     lessons: [
       { id: "ghd-1", title: "Ghidra Installation & UI Tour", duration: "10:10", videoUrl: null },
@@ -839,7 +839,7 @@ const coursesData = {
     category: "Cloud & DevSecOps",
     level: "Intermediate",
     description: "Provision secure cloud infrastructure as code. IaC scanning, state management, and security baselines.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "2h 15m",
     lessons: [
       { id: "tfm-1", title: "Infrastructure as Code Concepts", duration: "08:55", videoUrl: null },
@@ -859,7 +859,7 @@ const coursesData = {
     category: "Digital Forensics",
     level: "Beginner",
     description: "GUI-based digital forensics. Disk image analysis, file recovery, timeline analysis, and artifact extraction.",
-    instructor: "cyberM Team",
+    instructor: "HackPack Team",
     totalDuration: "1h 55m",
     lessons: [
       { id: "aut-1", title: "Autopsy Overview & Setup", duration: "08:40", videoUrl: null },

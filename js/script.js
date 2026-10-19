@@ -98,7 +98,7 @@ function switchRoadmap(roadmapId) {
   });
 }
 
-/* ========== RESOURCES RENDERER & FILTERS (change2 applied: no explicit counts) ========== */
+/* ========== RESOURCES RENDERER & FILTERS ========== */
 function renderResources() {
   const grid = document.getElementById('resourceGrid');
   if (!grid) return;
@@ -158,7 +158,7 @@ function filterResourceCategory(cat, btn) {
   renderResources();
 }
 
-/* ========== COURSE PAGE RENDERER (change4) ========== */
+/* ========== COURSE PAGE RENDERER ========== */
 function renderCourseToolNav() {
   const nav = document.getElementById('courseToolNav');
   if (!nav) return;
@@ -373,7 +373,7 @@ function setupAssistant() {
   launcher.addEventListener('click', () => {
     panel.classList.toggle('active');
     if (panel.classList.contains('active') && messages.children.length === 0) {
-      addAssistantMessage('bot', "Hello! Welcome to cyberM. I can help you find learning resources, explore tool courses, or select a vertical career roadmap. What would you like to explore today?");
+      addAssistantMessage('bot', "Hello! Welcome to HackPack. I can help you find learning resources, explore tool courses, or select a vertical career roadmap. What would you like to explore today?");
     }
   });
 
@@ -465,19 +465,31 @@ function respondToUser(query) {
 }
 
 /* ========== THEME TOGGLE CONTROLLER ========== */
+function updateBrandLogo(theme) {
+  const logo = document.getElementById('brandLogo');
+  if (!logo) return;
+  if (theme === 'dark') {
+    logo.src = 'assets/logo-dark-theme.png';
+  } else {
+    logo.src = 'assets/logo-light-theme.png';
+  }
+}
+
 function setupThemeToggle() {
   const btn = document.getElementById('themeToggle');
   if (!btn) return;
-  const savedTheme = localStorage.getItem('cyberM_theme') || 'dark';
+  const savedTheme = localStorage.getItem('hackpack_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
+  updateBrandLogo(savedTheme);
 
   btn.addEventListener('click', () => {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('cyberM_theme', newTheme);
+    localStorage.setItem('hackpack_theme', newTheme);
     updateThemeIcon(newTheme);
+    updateBrandLogo(newTheme);
   });
 }
 
