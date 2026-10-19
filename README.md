@@ -1,6 +1,6 @@
 # HackPack - Cybersecurity Learning Platform
 
-HackPack is a business-focused web frontend for a cybersecurity learning platform. It provides users with structured career roadmaps, video-based tool courses, curated free resources, and a searchable tool directory. 
+HackPack is a business-focused web application for a cybersecurity learning platform. It provides users with structured career roadmaps, video-based tool courses, curated free resources, and a searchable tool directory. 
 
 This is the Version 2 frontend codebase, designed to be lightweight and easily integratable with a future backend.
 
