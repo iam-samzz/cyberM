@@ -1,6 +1,7 @@
 /* ========== STATE MANAGEMENT ========== */
 let currentRoadmapId = "basics";
 let selectedResourceCategory = "all";
+let currentCourseToolId = "nmap";
 
 /* ========== NAVIGATION CONTROLLER ========== */
 function navigateTo(pageId) {
@@ -14,9 +15,10 @@ function navigateTo(pageId) {
     a.classList.toggle('active', a.getAttribute('data-page') === pageId);
   });
 
-  // Close mobile nav menu if open
-  document.getElementById('navLinks').classList.remove('open');
-  document.getElementById('hamburger').classList.remove('active');
+  const navLinks = document.getElementById('navLinks');
+  const hamburger = document.getElementById('hamburger');
+  if (navLinks) navLinks.classList.remove('open');
+  if (hamburger) hamburger.classList.remove('active');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -26,33 +28,32 @@ function switchRoadmap(roadmapId) {
   if (!roadmapsData[roadmapId]) return;
   currentRoadmapId = roadmapId;
 
-  // Update button active state
   document.querySelectorAll('.roadmap-nav-btn').forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('data-roadmap') === roadmapId);
   });
 
   const data = roadmapsData[roadmapId];
 
-  // Render Active Roadmap Header Banner
   const headerEl = document.getElementById('roadmapHeader');
-  headerEl.innerHTML = `
-    <div class="roadmap-active-header-badge">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      ${data.badge}
-    </div>
-    <h3>${data.title}</h3>
-    <p>${data.desc}</p>
-  `;
+  if (headerEl) {
+    headerEl.innerHTML = `
+      <div class="roadmap-active-header-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        ${data.badge}
+      </div>
+      <h3>${data.title}</h3>
+      <p>${data.desc}</p>
+    `;
+  }
 
-  // Render Vertical Roadmap Nodes
   const nodesContainer = document.getElementById('verticalRoadmapNodes');
+  if (!nodesContainer) return;
   nodesContainer.innerHTML = '';
 
   data.nodes.forEach(node => {
     const nodeCard = document.createElement('div');
     nodeCard.className = 'vertical-node-card';
 
-    // Topics Grid HTML
     let topicsHTML = '';
     if (node.topics && node.topics.length > 0) {
       topicsHTML = `
@@ -70,7 +71,6 @@ function switchRoadmap(roadmapId) {
       `;
     }
 
-    // Tools Row HTML
     let toolsHTML = '';
     if (node.tools && node.tools.length > 0) {
       toolsHTML = `
@@ -98,7 +98,7 @@ function switchRoadmap(roadmapId) {
   });
 }
 
-/* ========== RESOURCES RENDERER & FILTERS ========== */
+/* ========== RESOURCES RENDERER & FILTERS (change2 applied: no explicit counts) ========== */
 function renderResources() {
   const grid = document.getElementById('resourceGrid');
   if (!grid) return;
@@ -116,11 +116,6 @@ function renderResources() {
       res.skill.toLowerCase().includes(searchTerm);
     return matchesCategory && matchesLevel && matchesSearch;
   });
-
-  // Update Dashboard Stats
-  document.getElementById('resourceTotalCount').textContent = resources.length;
-  document.getElementById('resourceCategoryCount').textContent = new Set(resources.map(r => r.category)).size;
-  document.getElementById('resourceBeginnerCount').textContent = resources.filter(r => r.level === 'beginner').length;
 
   if (filtered.length === 0) {
     grid.innerHTML = `
@@ -163,6 +158,117 @@ function filterResourceCategory(cat, btn) {
   renderResources();
 }
 
+/* ========== COURSE PAGE RENDERER (change4) ========== */
+function renderCourseToolNav() {
+  const nav = document.getElementById('courseToolNav');
+  if (!nav) return;
+
+  const toolIds = Object.keys(coursesData);
+  nav.innerHTML = toolIds.map(id => {
+    const c = coursesData[id];
+    return `
+      <button class="course-tool-btn ${id === currentCourseToolId ? 'active' : ''}" data-course-tool="${id}" onclick="selectCourseTool('${id}')">
+        <span class="course-tool-icon">${c.icon}</span>
+        <span class="course-tool-name">${c.name}</span>
+        <span class="course-tool-level ${c.level.toLowerCase()}">${c.level}</span>
+      </button>
+    `;
+  }).join('');
+}
+
+function selectCourseTool(toolId) {
+  if (!coursesData[toolId]) return;
+  currentCourseToolId = toolId;
+  renderCourseToolNav();
+  renderCourseContent();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderCourseContent() {
+  const container = document.getElementById('courseContent');
+  if (!container) return;
+
+  const course = coursesData[currentCourseToolId];
+  if (!course) {
+    container.innerHTML = '<p class="no-results">Course not found.</p>';
+    return;
+  }
+
+  // Build lesson cards — video placeholders with data attributes for backend integration
+  const lessonsHTML = course.lessons.map((lesson, idx) => `
+    <div class="course-lesson-card" data-tool="${course.id}" data-lesson="${lesson.id}">
+      <div class="course-video-placeholder" data-video-slot="${lesson.id}">
+        <div class="course-video-play">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <span class="course-video-label">Video Placeholder</span>
+        <span class="course-video-duration">${lesson.duration}</span>
+      </div>
+      <div class="course-lesson-body">
+        <div class="course-lesson-meta">
+          <span class="course-lesson-number">Lesson ${idx + 1}</span>
+          <span class="course-lesson-duration">${lesson.duration}</span>
+        </div>
+        <h4 class="course-lesson-title">${lesson.title}</h4>
+        <div class="course-lesson-actions">
+          <button class="btn btn-secondary course-lesson-btn" onclick="playLessonPlaceholder('${lesson.id}')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Watch Lesson
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="course-header-card">
+      <div class="course-header-left">
+        <div class="course-tool-icon-lg">${course.icon}</div>
+        <div>
+          <div class="course-header-meta">
+            <span class="course-header-category">${course.category}</span>
+            <span class="course-header-level ${course.level.toLowerCase()}">${course.level}</span>
+          </div>
+          <h3 class="course-header-title">${course.name}</h3>
+          <p class="course-header-desc">${course.description}</p>
+          <div class="course-header-stats">
+            <span><strong>${course.lessons.length}</strong> Lessons</span>
+            <span><strong>${course.totalDuration}</strong> Total</span>
+            <span><strong>${course.instructor}</strong> Instructor</span>
+          </div>
+        </div>
+      </div>
+      <div class="course-header-actions">
+        <button class="btn btn-primary" onclick="navigateTo('contact'); document.getElementById('cSubject').value='tool-training'; document.getElementById('cMessage').value='I want to subscribe to the ${course.name} course.';">
+          Subscribe to Course
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="course-lessons-grid">
+      ${lessonsHTML}
+    </div>
+    <div class="course-backend-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <p>Video placeholders are ready for backend integration. Each slot has <code>data-video-slot</code> attributes matching the course data.</p>
+    </div>
+  `;
+}
+
+function playLessonPlaceholder(lessonId) {
+  // Backend integration point: replace with real video player
+  const slot = document.querySelector(`[data-video-slot="${lessonId}"]`);
+  if (slot) {
+    slot.innerHTML = `
+      <div class="course-video-backend-msg">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <p>Video embed slot ready</p>
+        <small>Backend team: inject iframe or video source here.</small>
+      </div>
+    `;
+  }
+}
+
 /* ========== TOOLS DIRECTORY RENDERER ========== */
 function renderTools() {
   const grid = document.getElementById('toolsGrid');
@@ -182,7 +288,6 @@ function renderTools() {
     return matchesCategory && matchesLevel && matchesSearch;
   });
 
-  // Update Tool Stats
   document.getElementById('totalToolsCount').textContent = tools.length;
   document.getElementById('totalCategoriesCount').textContent = new Set(tools.map(t => t.category)).size;
   document.getElementById('trendingToolsCount').textContent = tools.filter(t => t.trending).length;
@@ -263,10 +368,12 @@ function setupAssistant() {
   const input = document.getElementById('assistantInput');
   const messages = document.getElementById('assistantMessages');
 
+  if (!launcher || !panel) return;
+
   launcher.addEventListener('click', () => {
     panel.classList.toggle('active');
     if (panel.classList.contains('active') && messages.children.length === 0) {
-      addAssistantMessage('bot', "Hello! Welcome to cyberM. I can help you find learning resources, explore security tools, or select a vertical career roadmap. What would you like to explore today?");
+      addAssistantMessage('bot', "Hello! Welcome to cyberM. I can help you find learning resources, explore tool courses, or select a vertical career roadmap. What would you like to explore today?");
     }
   });
 
@@ -281,41 +388,45 @@ function setupAssistant() {
     setTimeout(() => respondToUser(text), 500);
   });
 
-  document.getElementById('assistantQuickActions').addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
-      const action = e.target.getAttribute('data-assistant-action');
-      if (action === 'career') {
-        addAssistantMessage('user', 'Start my cybersecurity journey');
-        setTimeout(() => {
-          addAssistantMessage('bot', 'Awesome! To start your journey, switch to our Main Cybersecurity Basics Vertical Roadmap. It covers OS fundamentals, networking, core security principles, and hands-on lab setup step-by-step.');
-          navigateTo('roadmap');
-          switchRoadmap('basics');
-        }, 500);
-      } else if (action === 'resources') {
-        addAssistantMessage('user', 'Find learning resources');
-        setTimeout(() => {
-          addAssistantMessage('bot', 'We have curated 46+ free learning resources including OWASP Top 10, NIST frameworks, PortSwigger Academy, and TryHackMe. Taking you there now!');
-          navigateTo('resources');
-        }, 500);
-      } else if (action === 'tools') {
-        addAssistantMessage('user', 'Explore security tools');
-        setTimeout(() => {
-          addAssistantMessage('bot', 'Explore our interactive Tools Directory to learn Nmap, Burp Suite, Metasploit, Wireshark, Splunk, and more. Taking you there now!');
-          navigateTo('tools');
-        }, 500);
-      } else if (action === 'roadmap') {
-        addAssistantMessage('user', 'Show career paths');
-        setTimeout(() => {
-          addAssistantMessage('bot', 'You can switch between 6 vertical career roadmaps: Cybersecurity Basics, SOC Analyst, Penetration Tester, Cloud Security, DFIR, and GRC Analyst!');
-          navigateTo('roadmap');
-        }, 500);
+  const quickActions = document.getElementById('assistantQuickActions');
+  if (quickActions) {
+    quickActions.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON') {
+        const action = e.target.getAttribute('data-assistant-action');
+        if (action === 'career') {
+          addAssistantMessage('user', 'Start my cybersecurity journey');
+          setTimeout(() => {
+            addAssistantMessage('bot', 'Awesome! To start your journey, switch to our Main Cybersecurity Basics Vertical Roadmap. It covers OS fundamentals, networking, core security principles, and hands-on lab setup step-by-step.');
+            navigateTo('roadmap');
+            switchRoadmap('basics');
+          }, 500);
+        } else if (action === 'courses') {
+          addAssistantMessage('user', 'Explore tool courses');
+          setTimeout(() => {
+            addAssistantMessage('bot', 'We have video-based courses for tools like Nmap, Burp Suite, Wireshark, Splunk, Metasploit, and more. Taking you to the Courses page now!');
+            navigateTo('courses');
+          }, 500);
+        } else if (action === 'resources') {
+          addAssistantMessage('user', 'Find learning resources');
+          setTimeout(() => {
+            addAssistantMessage('bot', 'We have curated free learning resources including OWASP Top 10, NIST frameworks, PortSwigger Academy, and TryHackMe. Taking you there now!');
+            navigateTo('resources');
+          }, 500);
+        } else if (action === 'tools') {
+          addAssistantMessage('user', 'Explore security tools');
+          setTimeout(() => {
+            addAssistantMessage('bot', 'Explore our interactive Tools Directory to learn Nmap, Burp Suite, Metasploit, Wireshark, Splunk, and more. Taking you there now!');
+            navigateTo('tools');
+          }, 500);
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 function addAssistantMessage(sender, text) {
   const messages = document.getElementById('assistantMessages');
+  if (!messages) return;
   const msg = document.createElement('div');
   msg.className = `assistant-message ${sender}`;
   msg.textContent = text;
@@ -325,7 +436,10 @@ function addAssistantMessage(sender, text) {
 
 function respondToUser(query) {
   const q = query.toLowerCase();
-  if (q.includes('soc') || q.includes('blue') || q.includes('defense')) {
+  if (q.includes('course') || q.includes('video') || q.includes('learn tool')) {
+    addAssistantMessage('bot', 'Our Courses page has video-based lessons for 12 security tools — Nmap, Burp Suite, Metasploit, Wireshark, Splunk, Hashcat, and more. Taking you there now!');
+    navigateTo('courses');
+  } else if (q.includes('soc') || q.includes('blue') || q.includes('defense')) {
     addAssistantMessage('bot', 'The SOC Analyst (Blue Team) roadmap focuses on monitoring, log correlation with Splunk/Sentinel, packet analysis with Wireshark, and incident response lifecycle!');
     navigateTo('roadmap');
     switchRoadmap('soc');
@@ -346,13 +460,14 @@ function respondToUser(query) {
     navigateTo('roadmap');
     switchRoadmap('grc');
   } else {
-    addAssistantMessage('bot', "I can guide you through our site! You can explore curated learning resources, test tools in our directory, or follow one of our vertical career roadmaps.");
+    addAssistantMessage('bot', "I can guide you through our site! You can explore tool courses, curated learning resources, test tools in our directory, or follow one of our vertical career roadmaps.");
   }
 }
 
 /* ========== THEME TOGGLE CONTROLLER ========== */
 function setupThemeToggle() {
   const btn = document.getElementById('themeToggle');
+  if (!btn) return;
   const savedTheme = localStorage.getItem('cyberM_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
@@ -368,6 +483,7 @@ function setupThemeToggle() {
 
 function updateThemeIcon(theme) {
   const btn = document.getElementById('themeToggle');
+  if (!btn) return;
   if (theme === 'dark') {
     btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
   } else {
@@ -379,6 +495,7 @@ function updateThemeIcon(theme) {
 function setupMobileNav() {
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
+  if (!hamburger || !navLinks) return;
   hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navLinks.classList.toggle('open');
@@ -395,21 +512,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize Resources
   renderResources();
-  document.getElementById('searchInput').addEventListener('input', renderResources);
-  document.getElementById('resourceLevelFilter').addEventListener('change', renderResources);
+  const searchInput = document.getElementById('searchInput');
+  const resourceLevelFilter = document.getElementById('resourceLevelFilter');
+  if (searchInput) searchInput.addEventListener('input', renderResources);
+  if (resourceLevelFilter) resourceLevelFilter.addEventListener('change', renderResources);
+
+  // Initialize Courses
+  renderCourseToolNav();
+  renderCourseContent();
 
   // Initialize Tools Directory
   populateToolCategoryFilter();
   renderTools();
-  document.getElementById('toolSearchInput').addEventListener('input', renderTools);
-  document.getElementById('toolCategoryFilter').addEventListener('change', renderTools);
-  document.getElementById('toolLevelFilter').addEventListener('change', renderTools);
-  document.getElementById('resetToolFilters').addEventListener('click', () => {
-    document.getElementById('toolSearchInput').value = '';
-    document.getElementById('toolCategoryFilter').value = 'all';
-    document.getElementById('toolLevelFilter').value = 'all';
-    renderTools();
-  });
+  const toolSearchInput = document.getElementById('toolSearchInput');
+  const toolCategoryFilter = document.getElementById('toolCategoryFilter');
+  const toolLevelFilter = document.getElementById('toolLevelFilter');
+  const resetToolFilters = document.getElementById('resetToolFilters');
+  if (toolSearchInput) toolSearchInput.addEventListener('input', renderTools);
+  if (toolCategoryFilter) toolCategoryFilter.addEventListener('change', renderTools);
+  if (toolLevelFilter) toolLevelFilter.addEventListener('change', renderTools);
+  if (resetToolFilters) {
+    resetToolFilters.addEventListener('click', () => {
+      document.getElementById('toolSearchInput').value = '';
+      document.getElementById('toolCategoryFilter').value = 'all';
+      document.getElementById('toolLevelFilter').value = 'all';
+      renderTools();
+    });
+  }
 
   // Initialize Assistant
   setupAssistant();

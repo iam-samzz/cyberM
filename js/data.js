@@ -609,3 +609,267 @@ const tools = [
     features:["Disk image analysis (.E01, .raw)","File recovery and deleted data carving","Web artifact analysis and keyword searching","Timeline visualization of system activity","EXIF metadata extraction from images"]
   }
 ];
+
+
+/* ========== COURSES DATA (Tool-based video courses) ========== */
+/*
+ * BACKEND INTEGRATION GUIDE:
+ * Each course object follows this schema:
+ * {
+ *   id: string (unique identifier, matches tool id where possible),
+ *   name: string (course display name),
+ *   icon: string (single letter for tool icon),
+ *   category: string (tool category),
+ *   level: string (Beginner | Intermediate | Advanced),
+ *   description: string (short course overview),
+ *   instructor: string,
+ *   totalDuration: string,
+ *   lessons: [
+ *     { id: string, title: string, duration: string, videoUrl: string|null }
+ *     // videoUrl: null => placeholder. Backend team can inject real embed URLs.
+ *   ]
+ * }
+ */
+
+const coursesData = {
+  nmap: {
+    id: "nmap",
+    name: "Nmap Essentials",
+    icon: "N",
+    category: "Network Scanner",
+    level: "Beginner",
+    description: "Learn network discovery, port scanning, OS detection, and the Nmap Scripting Engine from scratch.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 15m",
+    lessons: [
+      { id: "nmap-1", title: "What is Nmap & Why It Matters", duration: "08:20", videoUrl: null },
+      { id: "nmap-2", title: "Installing Nmap on Linux & Windows", duration: "06:45", videoUrl: null },
+      { id: "nmap-3", title: "Host Discovery Techniques", duration: "12:10", videoUrl: null },
+      { id: "nmap-4", title: "Port Scanning Fundamentals", duration: "15:30", videoUrl: null },
+      { id: "nmap-5", title: "Service Version & OS Detection", duration: "11:55", videoUrl: null },
+      { id: "nmap-6", title: "NSE Scripts & Automation", duration: "14:20", videoUrl: null },
+      { id: "nmap-7", title: "Output Formats & Reporting", duration: "09:10", videoUrl: null },
+      { id: "nmap-8", title: "Real-World Network Mapping Lab", duration: "18:40", videoUrl: null }
+    ]
+  },
+  burp: {
+    id: "burp",
+    name: "Burp Suite Fundamentals",
+    icon: "B",
+    category: "Web Security Testing",
+    level: "Intermediate",
+    description: "Master web application testing with Burp Suite — proxy, intruder, repeater, scanner, and collaborator.",
+    instructor: "cyberM Team",
+    totalDuration: "3h 10m",
+    lessons: [
+      { id: "burp-1", title: "Burp Suite Architecture Overview", duration: "10:15", videoUrl: null },
+      { id: "burp-2", title: "Setting Up the Intercepting Proxy", duration: "12:40", videoUrl: null },
+      { id: "burp-3", title: "Repeater & Modifying Requests", duration: "14:05", videoUrl: null },
+      { id: "burp-4", title: "Intruder for Brute Force Attacks", duration: "16:20", videoUrl: null },
+      { id: "burp-5", title: "Scanner & Automated Vuln Detection", duration: "13:35", videoUrl: null },
+      { id: "burp-6", title: "Collaborator & Out-of-Band Testing", duration: "11:50", videoUrl: null },
+      { id: "burp-7", title: "Analyzing OWASP Top 10 Vulnerabilities", duration: "20:10", videoUrl: null },
+      { id: "burp-8", title: "Bug Bounty Workflow Lab", duration: "18:45", videoUrl: null }
+    ]
+  },
+  metasploit: {
+    id: "metasploit",
+    name: "Metasploit Framework Mastery",
+    icon: "M",
+    category: "Exploitation Framework",
+    level: "Intermediate",
+    description: "Learn exploit modules, payloads, auxiliary scanners, and post-exploitation using MSFconsole.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 50m",
+    lessons: [
+      { id: "msf-1", title: "Metasploit Architecture & Setup", duration: "09:30", videoUrl: null },
+      { id: "msf-2", title: "Exploit Modules & Payloads", duration: "14:15", videoUrl: null },
+      { id: "msf-3", title: "Auxiliary Scanners & Fuzzers", duration: "11:20", videoUrl: null },
+      { id: "msf-4", title: "Meterpreter Shell Deep Dive", duration: "16:40", videoUrl: null },
+      { id: "msf-5", title: "Post-Exploitation Modules", duration: "13:55", videoUrl: null },
+      { id: "msf-6", title: "Pivoting & Lateral Movement", duration: "15:10", videoUrl: null },
+      { id: "msf-7", title: "MSF Database & Reporting", duration: "10:25", videoUrl: null },
+      { id: "msf-8", title: "Full Penetration Testing Lab", duration: "22:00", videoUrl: null }
+    ]
+  },
+  wireshark: {
+    id: "wireshark",
+    name: "Wireshark Packet Analysis",
+    icon: "W",
+    category: "Packet Analyzer",
+    level: "Beginner",
+    description: "Capture and analyze network traffic. Master filters, protocol inspection, and troubleshooting.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 05m",
+    lessons: [
+      { id: "wsh-1", title: "Wireshark Interface & Installation", duration: "08:45", videoUrl: null },
+      { id: "wsh-2", title: "Live Capture vs Offline Analysis", duration: "10:20", videoUrl: null },
+      { id: "wsh-3", title: "Display Filters & Capture Filters", duration: "13:35", videoUrl: null },
+      { id: "wsh-4", title: "Inspecting TCP & UDP Traffic", duration: "15:10", videoUrl: null },
+      { id: "wsh-5", title: "Following HTTP & HTTPS Streams", duration: "12:50", videoUrl: null },
+      { id: "wsh-6", title: "DNS & DHCP Analysis", duration: "09:40", videoUrl: null },
+      { id: "wsh-7", title: "Detecting Suspicious Traffic", duration: "14:05", videoUrl: null },
+      { id: "wsh-8", title: "Incident Response Packet Lab", duration: "17:30", videoUrl: null }
+    ]
+  },
+  splunk: {
+    id: "splunk",
+    name: "Splunk for Security Operations",
+    icon: "S",
+    category: "SIEM Platform",
+    level: "Intermediate",
+    description: "Build SIEM dashboards, write SPL queries, and detect threats using Splunk in a SOC context.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 40m",
+    lessons: [
+      { id: "spl-1", title: "Splunk Architecture Overview", duration: "09:15", videoUrl: null },
+      { id: "spl-2", title: "Data Ingestion & Parsing", duration: "12:30", videoUrl: null },
+      { id: "spl-3", title: "SPL Fundamentals", duration: "14:20", videoUrl: null },
+      { id: "spl-4", title: "Writing Detection Queries", duration: "16:05", videoUrl: null },
+      { id: "spl-5", title: "Building Security Dashboards", duration: "13:45", videoUrl: null },
+      { id: "spl-6", title: "Correlation & Alerting", duration: "11:55", videoUrl: null },
+      { id: "spl-7", title: "Threat Intelligence Integration", duration: "10:40", videoUrl: null },
+      { id: "spl-8", title: "SOC Monitoring Lab", duration: "19:20", videoUrl: null }
+    ]
+  },
+  hashcat: {
+    id: "hashcat",
+    name: "Hashcat Password Recovery",
+    icon: "H",
+    category: "Password Recovery",
+    level: "Advanced",
+    description: "GPU-accelerated password cracking with Hashcat. Attack modes, hash types, and rule-based attacks.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 20m",
+    lessons: [
+      { id: "hsh-1", title: "Hashcat Setup & GPU Configuration", duration: "10:10", videoUrl: null },
+      { id: "hsh-2", title: "Understanding Hash Types", duration: "11:25", videoUrl: null },
+      { id: "hsh-3", title: "Dictionary & Combinator Attacks", duration: "14:40", videoUrl: null },
+      { id: "hsh-4", title: "Rule-Based Word Mangling", duration: "12:15", videoUrl: null },
+      { id: "hsh-5", title: "Brute Force & Mask Attacks", duration: "15:30", videoUrl: null },
+      { id: "hsh-6", title: "Session Management & Optimization", duration: "08:50", videoUrl: null },
+      { id: "hsh-7", title: "Distributed Cracking Lab", duration: "13:20", videoUrl: null },
+      { id: "hsh-8", title: "Password Audit Workflow", duration: "16:10", videoUrl: null }
+    ]
+  },
+  john: {
+    id: "john",
+    name: "John the Ripper",
+    icon: "J",
+    category: "Password Cracker",
+    level: "Intermediate",
+    description: "Open-source password auditing with John the Ripper. Dictionary attacks, rules, and incremental mode.",
+    instructor: "cyberM Team",
+    totalDuration: "1h 50m",
+    lessons: [
+      { id: "jtr-1", title: "John the Ripper Overview", duration: "08:30", videoUrl: null },
+      { id: "jtr-2", title: "Hash Detection & Extraction", duration: "10:45", videoUrl: null },
+      { id: "jtr-3", title: "Dictionary Attacks", duration: "12:20", videoUrl: null },
+      { id: "jtr-4", title: "Single Crack & Incremental Mode", duration: "11:15", videoUrl: null },
+      { id: "jtr-5", title: "Rule-Based Word Mangling", duration: "09:40", videoUrl: null },
+      { id: "jtr-6", title: "Cracking Linux Shadow Files", duration: "13:05", videoUrl: null },
+      { id: "jtr-7", title: "John in Password Audits", duration: "10:30", videoUrl: null },
+      { id: "jtr-8", title: "Practical Hash Cracking Lab", duration: "15:25", videoUrl: null }
+    ]
+  },
+  snort: {
+    id: "snort",
+    name: "Snort & Suricata IDS/IPS",
+    icon: "S",
+    category: "IDS/IPS",
+    level: "Intermediate",
+    description: "Deploy and configure open-source intrusion detection/prevention systems with custom rules.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 00m",
+    lessons: [
+      { id: "snt-1", title: "IDS vs IPS Concepts", duration: "09:10", videoUrl: null },
+      { id: "snt-2", title: "Installing Snort & Suricata", duration: "11:35", videoUrl: null },
+      { id: "snt-3", title: "Rule Syntax & Structure", duration: "14:50", videoUrl: null },
+      { id: "snt-4", title: "Writing Custom Detection Rules", duration: "16:20", videoUrl: null },
+      { id: "snt-5", title: "Inline Prevention Mode", duration: "10:15", videoUrl: null },
+      { id: "snt-6", title: "PCAP Logging & Alerting", duration: "08:55", videoUrl: null },
+      { id: "snt-7", title: "Port Scan Detection Lab", duration: "12:40", videoUrl: null },
+      { id: "snt-8", title: "Network Defense Simulation", duration: "14:30", videoUrl: null }
+    ]
+  },
+  volatility: {
+    id: "volatility",
+    name: "Volatility Memory Forensics",
+    icon: "V",
+    category: "Memory Forensics",
+    level: "Advanced",
+    description: "Analyze RAM dumps for incident response. Extract processes, injected code, and network artifacts.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 30m",
+    lessons: [
+      { id: "vol-1", title: "Memory Forensics Fundamentals", duration: "10:20", videoUrl: null },
+      { id: "vol-2", title: "Acquiring RAM Captures", duration: "12:45", videoUrl: null },
+      { id: "vol-3", title: "Volatility 3 Setup & Plugins", duration: "11:30", videoUrl: null },
+      { id: "vol-4", title: "Process Enumeration & Analysis", duration: "14:15", videoUrl: null },
+      { id: "vol-5", title: "Detecting Injected Code", duration: "16:40", videoUrl: null },
+      { id: "vol-6", title: "Network Connections in Memory", duration: "09:55", videoUrl: null },
+      { id: "vol-7", title: "Malware Artifact Extraction", duration: "13:20", videoUrl: null },
+      { id: "vol-8", title: "IR Memory Analysis Lab", duration: "18:05", videoUrl: null }
+    ]
+  },
+  ghidra: {
+    id: "ghidra",
+    name: "Ghidra Reverse Engineering",
+    icon: "G",
+    category: "Reverse Engineering",
+    level: "Advanced",
+    description: "NSA's open-source reverse engineering suite. Disassemble, decompile, and analyze binaries.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 45m",
+    lessons: [
+      { id: "ghd-1", title: "Ghidra Installation & UI Tour", duration: "10:10", videoUrl: null },
+      { id: "ghd-2", title: "Importing & Analyzing Binaries", duration: "12:25", videoUrl: null },
+      { id: "ghd-3", title: "Disassembly vs Decompilation", duration: "14:50", videoUrl: null },
+      { id: "ghd-4", title: "Function Analysis & Call Graphs", duration: "15:35", videoUrl: null },
+      { id: "ghd-5", title: "String & Symbol Analysis", duration: "09:40", videoUrl: null },
+      { id: "ghd-6", title: "Scripting with Python & Java", duration: "13:15", videoUrl: null },
+      { id: "ghd-7", title: "Malware Binary Analysis", duration: "18:20", videoUrl: null },
+      { id: "ghd-8", title: "CTF Reverse Engineering Lab", duration: "21:10", videoUrl: null }
+    ]
+  },
+  terraform: {
+    id: "terraform",
+    name: "Terraform for Cloud Security",
+    icon: "T",
+    category: "Cloud & DevSecOps",
+    level: "Intermediate",
+    description: "Provision secure cloud infrastructure as code. IaC scanning, state management, and security baselines.",
+    instructor: "cyberM Team",
+    totalDuration: "2h 15m",
+    lessons: [
+      { id: "tfm-1", title: "Infrastructure as Code Concepts", duration: "08:55", videoUrl: null },
+      { id: "tfm-2", title: "Terraform Setup & Providers", duration: "11:20", videoUrl: null },
+      { id: "tfm-3", title: "Writing Secure Configuration", duration: "14:40", videoUrl: null },
+      { id: "tfm-4", title: "State File Management", duration: "10:15", videoUrl: null },
+      { id: "tfm-5", title: "IaC Security Scanning (Checkov)", duration: "13:30", videoUrl: null },
+      { id: "tfm-6", title: "Multi-Cloud Security Baselines", duration: "15:05", videoUrl: null },
+      { id: "tfm-7", title: "CI/CD Pipeline Integration", duration: "12:45", videoUrl: null },
+      { id: "tfm-8", title: "Secure Cloud Provisioning Lab", duration: "17:20", videoUrl: null }
+    ]
+  },
+  autopsy: {
+    id: "autopsy",
+    name: "Autopsy Digital Forensics",
+    icon: "A",
+    category: "Digital Forensics",
+    level: "Beginner",
+    description: "GUI-based digital forensics. Disk image analysis, file recovery, timeline analysis, and artifact extraction.",
+    instructor: "cyberM Team",
+    totalDuration: "1h 55m",
+    lessons: [
+      { id: "aut-1", title: "Autopsy Overview & Setup", duration: "08:40", videoUrl: null },
+      { id: "aut-2", title: "Creating a New Case", duration: "07:25", videoUrl: null },
+      { id: "aut-3", title: "Loading Disk Images (.E01, .raw)", duration: "10:10", videoUrl: null },
+      { id: "aut-4", title: "File Recovery & Data Carving", duration: "13:35", videoUrl: null },
+      { id: "aut-5", title: "Keyword Searching & Artifacts", duration: "11:20", videoUrl: null },
+      { id: "aut-6", title: "Timeline Analysis", duration: "09:45", videoUrl: null },
+      { id: "aut-7", title: "EXIF Metadata Extraction", duration: "08:30", videoUrl: null },
+      { id: "aut-8", title: "Full Forensic Investigation Lab", duration: "16:15", videoUrl: null }
+    ]
+  }
+};
