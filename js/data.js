@@ -873,3 +873,330 @@ const coursesData = {
     ]
   }
 };
+
+/* ========== TOOL NAME TO ID MAPPING (For Roadmap & Search Integration) ========== */
+const toolNameToIdMap = {
+  "nmap": "nmap",
+  "burp": "burp",
+  "burp suite": "burp",
+  "metasploit": "metasploit",
+  "metasploit framework": "metasploit",
+  "wireshark": "wireshark",
+  "hashcat": "hashcat",
+  "john the ripper": "john",
+  "john": "john",
+  "splunk": "splunk",
+  "snort": "snort",
+  "suricata": "snort",
+  "snort / suricata": "snort",
+  "volatility": "volatility",
+  "volatility 3": "volatility",
+  "ghidra": "ghidra",
+  "terraform": "terraform",
+  "autopsy": "autopsy"
+};
+
+/* ========== INTERACTIVE TOOL LEARNING ACTIVITIES ========== */
+/*
+ * Safe, educational, frontend-only activities for representative tools:
+ * 1. Knowledge quizzes
+ * 2. Scenario challenges
+ * 3. Command & parameter interpretations
+ * 4. Packet & log analysis
+ */
+const toolActivities = {
+  nmap: {
+    toolId: "nmap",
+    title: "Nmap Hands-on Skill Challenge",
+    description: "Test your network scanning, port interpretation, and command knowledge with real-world scenarios.",
+    passingScore: 2,
+    questions: [
+      {
+        id: "nmap-q1",
+        type: "command-interpretation",
+        badge: "Command Interpretation",
+        prompt: "Examine the following Nmap command:",
+        codeSnippet: "nmap -sS -sV -p 22,80,443 -T4 192.168.1.50",
+        question: "What does the <code>-sV</code> flag tell Nmap to perform in this scan?",
+        options: [
+          { id: "a", text: "Perform a stealthy UDP scan across all specified ports" },
+          { id: "b", text: "Interrogate open ports to probe and determine service/version information", correct: true },
+          { id: "c", text: "Save the output in verbose XML format to a file" },
+          { id: "d", text: "Simulate a distributed SYN flood attack against the target" }
+        ],
+        explanation: "The <code>-sV</code> flag enables service version detection. After identifying open ports via TCP SYN (<code>-sS</code>), Nmap sends targeted probes to identify the application name and exact version."
+      },
+      {
+        id: "nmap-q2",
+        type: "scenario-challenge",
+        badge: "Scenario Challenge",
+        prompt: "Scenario: An audit requires finding all live hosts on the <code>10.0.0.0/24</code> subnet as quickly as possible without probing individual port numbers.",
+        question: "Which Nmap scan technique is best suited for this initial host discovery phase?",
+        options: [
+          { id: "a", text: "nmap -p- -A 10.0.0.0/24 (Full port scan with OS and version detection)" },
+          { id: "b", text: "nmap -sn 10.0.0.0/24 (Host discovery / Ping sweep without port scan)", correct: true },
+          { id: "c", text: "nmap --script exploit 10.0.0.0/24 (Vulnerability exploitation)" },
+          { id: "d", text: "nmap -O -sU 10.0.0.0/24 (UDP operating system detection)" }
+        ],
+        explanation: "<code>nmap -sn</code> (formerly <code>-sP</code>) disables port scanning entirely and performs only host discovery (ICMP echo, TCP SYN to 443, TCP ACK to 80, and ARP requests on local Ethernet), making it extremely fast."
+      },
+      {
+        id: "nmap-q3",
+        type: "log-analysis",
+        badge: "Scan Output Analysis",
+        prompt: "Inspect this snippet from an authorized vulnerability scan report:",
+        codeSnippet: "PORT    STATE SERVICE VERSION\n21/tcp  open  ftp     vsftpd 2.3.4\n22/tcp  open  ssh     OpenSSH 8.2p1 Ubuntu\n80/tcp  open  http    Apache httpd 2.4.41",
+        question: "Which service version in this output indicates a notorious historic backdoor vulnerability (CVE-2011-2523)?",
+        options: [
+          { id: "a", text: "OpenSSH 8.2p1 Ubuntu" },
+          { id: "b", text: "Apache httpd 2.4.41" },
+          { id: "c", text: "vsftpd 2.3.4", correct: true },
+          { id: "d", text: "None of these services have known CVEs" }
+        ],
+        explanation: "vsftpd 2.3.4 famously had a compromised source archive back in 2011 containing a smile-face backdoor token (<code>:)</code>) that opened an unauthorized root shell on TCP port 6200."
+      }
+    ]
+  },
+  burp: {
+    toolId: "burp",
+    title: "Burp Suite Web Security Challenge",
+    description: "Evaluate your web proxy, parameter tampering, and HTTP header analysis capabilities.",
+    passingScore: 2,
+    questions: [
+      {
+        id: "burp-q1",
+        type: "scenario-challenge",
+        badge: "Scenario Challenge",
+        prompt: "Scenario: You are testing an e-commerce checkout flow. You need to capture an outgoing order request, halt it before it reaches the server, modify the parameter <code>amount=150.00</code> to <code>amount=1.00</code>, and observe the server's response.",
+        question: "Which core Burp Suite tab is primarily designed for this manual intercept and replay workflow?",
+        options: [
+          { id: "a", text: "Proxy (Intercept) and Repeater", correct: true },
+          { id: "b", text: "Burp Sequencer" },
+          { id: "c", text: "Burp Decoder" },
+          { id: "d", text: "Burp Extender (BApp Store)" }
+        ],
+        explanation: "Burp Proxy acts as an inline intercepting proxy to pause requests, while Burp Repeater allows sending modified requests repeatedly and comparing server HTTP responses."
+      },
+      {
+        id: "burp-q2",
+        type: "knowledge-quiz",
+        badge: "Knowledge Quiz",
+        prompt: "When automating test inputs against web application parameters in Burp Intruder:",
+        question: "Which attack type places a single payload into each defined payload position one by one sequentially?",
+        options: [
+          { id: "a", text: "Sniper", correct: true },
+          { id: "b", text: "Battering Ram" },
+          { id: "c", text: "Pitchfork" },
+          { id: "d", text: "Cluster Bomb" }
+        ],
+        explanation: "The 'Sniper' attack type uses a single set of payloads and targets each parameter position individually in sequence, making it the standard choice for fuzzing individual input fields."
+      },
+      {
+        id: "burp-q3",
+        type: "command-interpretation",
+        badge: "HTTP Header Analysis",
+        prompt: "Examine this intercepted HTTP header snippet captured in Burp Proxy:",
+        codeSnippet: "POST /api/v1/profile HTTP/1.1\nHost: api.internal.corp\nAuthorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWRtaW4ifQ==\nContent-Type: application/json",
+        question: "What standard token format is being used in the Authorization header above?",
+        options: [
+          { id: "a", text: "JSON Web Token (JWT) consisting of Base64URL-encoded segments", correct: true },
+          { id: "b", text: "NTLM Kerberos ticket handshake" },
+          { id: "c", text: "HMAC-MD5 hex-encoded hash digest" },
+          { id: "d", text: "Basic Authentication credentials (username:password)" }
+        ],
+        explanation: "The header contains a JSON Web Token (JWT), recognizable by the <code>Bearer</code> keyword and period-separated Base64URL header/payload segments beginning with <code>eyJ...</code>."
+      }
+    ]
+  },
+  wireshark: {
+    toolId: "wireshark",
+    title: "Wireshark Packet Analysis Challenge",
+    description: "Demonstrate network protocol analysis, display filtering, and threat identification.",
+    passingScore: 2,
+    questions: [
+      {
+        id: "wsh-q1",
+        type: "command-interpretation",
+        badge: "Display Filter Interpretation",
+        prompt: "You are investigating an alert and type the following into Wireshark's filter bar:",
+        codeSnippet: "tcp.flags.syn == 1 && tcp.flags.ack == 0",
+        question: "What specific network traffic will this display filter isolate?",
+        options: [
+          { id: "a", text: "Initial TCP connection initiation requests (SYN packets without ACK)", correct: true },
+          { id: "b", text: "Established data stream segments carrying payloads" },
+          { id: "c", text: "Graceful TCP connection termination handshakes (FIN packets)" },
+          { id: "d", text: "Network connection resets triggered by firewalls (RST packets)" }
+        ],
+        explanation: "In the TCP 3-way handshake, the initial client request has the SYN bit set to 1 and ACK set to 0. This filter isolates connection attempts and helps identify SYN scan activity or brute-force connection floods."
+      },
+      {
+        id: "wsh-q2",
+        type: "log-analysis",
+        badge: "Packet Stream Analysis",
+        prompt: "Analyze the two consecutive packets recorded in a network packet capture:",
+        codeSnippet: "Packet #14: Src: 192.168.1.105:51234 -> Dst: 192.168.1.1:53   Protocol: DNS | Query: A malicious-c2-node.xyz\nPacket #15: Src: 192.168.1.1:53      -> Dst: 192.168.1.105:51234 Protocol: DNS | Response: 198.51.100.22",
+        question: "What role is host <code>192.168.1.1</code> performing in this transaction?",
+        options: [
+          { id: "a", text: "The compromised workstation generating outbound traffic" },
+          { id: "b", text: "The local DNS resolver answering the domain resolution request", correct: true },
+          { id: "c", text: "The remote external Command-and-Control (C2) server" },
+          { id: "d", text: "An unauthorized rogue DHCP server" }
+        ],
+        explanation: "Port 53 is the standard DNS port. <code>192.168.1.105</code> queries the local DNS resolver at <code>192.168.1.1:53</code>, which resolves the IP address of the queried domain to <code>198.51.100.22</code>."
+      },
+      {
+        id: "wsh-q3",
+        type: "scenario-challenge",
+        badge: "Scenario Challenge",
+        prompt: "Scenario: An unencrypted HTTP file download was captured in a packet capture (.pcap). You need to inspect the complete conversation and view the transferred text.",
+        question: "Which Wireshark feature reconstructs the entire application-layer payload into a continuous readable stream?",
+        options: [
+          { id: "a", text: "Right click packet -> Follow -> TCP Stream", correct: true },
+          { id: "b", text: "Statistics -> Protocol Hierarchy" },
+          { id: "c", text: "Analyze -> Expert Information" },
+          { id: "d", text: "File -> Export Packet Bytes" }
+        ],
+        explanation: "Right clicking a packet and selecting 'Follow -> TCP Stream' reassembles all sequential TCP segments into an intelligible bidirectional transcript (red for client, blue for server)."
+      }
+    ]
+  },
+  splunk: {
+    toolId: "splunk",
+    title: "Splunk SIEM Query Challenge",
+    description: "Interpret SPL queries, correlation rules, and Windows security event IDs.",
+    passingScore: 1,
+    questions: [
+      {
+        id: "spl-q1",
+        type: "command-interpretation",
+        badge: "SPL Query Interpretation",
+        prompt: "A SOC analyst configures the following Splunk SPL query:",
+        codeSnippet: "index=security sourcetype=WinEventLog:Security EventCode=4625 \n| stats count by user, src_ip \n| where count > 5",
+        question: "What security occurrence is this query actively monitoring?",
+        options: [
+          { id: "a", text: "Repeated failed logon attempts indicative of password spraying or brute force", correct: true },
+          { id: "b", text: "Successful privileged account logins after normal working hours" },
+          { id: "c", text: "Unauthorized installation of new Windows background services (EventCode 7045)" },
+          { id: "d", text: "Firewall rule deletions and policy alterations" }
+        ],
+        explanation: "Windows Event Code 4625 specifically logs failed account logon attempts. Aggregating by user and source IP with a threshold over 5 alerts on brute force attacks."
+      },
+      {
+        id: "spl-q2",
+        type: "scenario-challenge",
+        badge: "SIEM Architecture",
+        prompt: "Scenario: A corporate network has 500 endpoint laptops. You need to collect system and authentication logs from each laptop and forward them securely to the central Splunk Indexer in real-time.",
+        question: "Which lightweight Splunk component is installed directly on endpoint machines for this purpose?",
+        options: [
+          { id: "a", text: "Splunk Universal Forwarder (UF)", correct: true },
+          { id: "b", text: "Splunk Search Head" },
+          { id: "c", text: "Splunk Heavy Forwarder Cluster" },
+          { id: "d", text: "Splunk Deployment Server" }
+        ],
+        explanation: "The Splunk Universal Forwarder is the dedicated, resource-efficient agent designed to run on client endpoints to ingest logs and reliably stream them to the indexing layer."
+      }
+    ]
+  },
+  metasploit: {
+    toolId: "metasploit",
+    title: "Metasploit Framework Mastery Quiz",
+    description: "Validate your knowledge of exploit architecture, payload options, and handler setup.",
+    passingScore: 1,
+    questions: [
+      {
+        id: "msf-q1",
+        type: "scenario-challenge",
+        badge: "Exploit Configuration",
+        prompt: "Scenario: In MSFconsole, you selected an exploit and configured a staged reverse TCP meterpreter payload.",
+        question: "Which configuration parameter sets the IP address of the attacker's listening machine that the target payload must connect back to?",
+        options: [
+          { id: "a", text: "set LHOST", correct: true },
+          { id: "b", text: "set RHOSTS" },
+          { id: "c", text: "set TARGET_URI" },
+          { id: "d", text: "set PAYLOAD_IP" }
+        ],
+        explanation: "In Metasploit, <code>LHOST</code> (Local Host) specifies the IP address of the attacker's listener to receive the reverse connection, whereas <code>RHOSTS</code> (Remote Hosts) specifies the target machine."
+      },
+      {
+        id: "msf-q2",
+        type: "knowledge-quiz",
+        badge: "Architecture Concepts",
+        prompt: "When selecting payloads in the Metasploit Framework:",
+        question: "What is the key functional difference between a staged payload (e.g., <code>windows/meterpreter/reverse_tcp</code>) and a stageless/inline payload (e.g., <code>windows/meterpreter_reverse_tcp</code>)?",
+        options: [
+          { id: "a", text: "Staged payloads send a tiny initial stub that downloads the remaining payload over the connection, fitting into limited buffer space", correct: true },
+          { id: "b", text: "Staged payloads only work on Linux systems, whereas inline payloads work on Windows" },
+          { id: "c", text: "Staged payloads never establish network connections" },
+          { id: "d", text: "Inline payloads require physical USB access to deploy" }
+        ],
+        explanation: "Staged payloads (signaled by a forward slash <code>/</code> between components) execute a minimal first-stage shellcode that connects back to retrieve the full Meterpreter DLL into memory, overcoming small exploit buffer limits."
+      }
+    ]
+  },
+  hashcat: {
+    toolId: "hashcat",
+    title: "Hashcat Password Recovery Challenge",
+    description: "Assess your knowledge of password recovery modes, GPU acceleration, and rule-based attacks.",
+    passingScore: 1,
+    questions: [
+      {
+        id: "hsh-q1",
+        type: "command-interpretation",
+        badge: "Attack Mode Identification",
+        prompt: "Consider the standard Hashcat command syntax: <code>hashcat -m 0 -a 0 hashes.txt wordlist.txt -r rules/best64.rule</code>",
+        question: "What attack mode does <code>-a 0</code> represent in Hashcat?",
+        options: [
+          { id: "a", text: "Straight / Dictionary attack (optionally modified with rules)", correct: true },
+          { id: "b", text: "Combinator attack" },
+          { id: "c", text: "Brute-force / Mask attack" },
+          { id: "d", text: "Hybrid wordlist + mask attack" }
+        ],
+        explanation: "<code>-a 0</code> designates the straight dictionary attack mode, iterating through candidates in the wordlist and applying mutation rules specified by <code>-r</code>."
+      }
+    ]
+  },
+  ghidra: {
+    toolId: "ghidra",
+    title: "Ghidra Reverse Engineering Challenge",
+    description: "Evaluate your binary decompilation and function analysis comprehension.",
+    passingScore: 1,
+    questions: [
+      {
+        id: "ghd-q1",
+        type: "knowledge-quiz",
+        badge: "SRE Fundamentals",
+        prompt: "During software reverse engineering in Ghidra:",
+        question: "What is the primary advantage of Ghidra's decompiler over a traditional disassembler?",
+        options: [
+          { id: "a", text: "It reconstructs machine assembly instructions into high-level, human-readable C-like pseudo-code", correct: true },
+          { id: "b", text: "It automatically executes the malware to observe network connections" },
+          { id: "c", text: "It converts 64-bit binaries into 32-bit binaries" },
+          { id: "d", text: "It decrypts HTTPS traffic in real-time" }
+        ],
+        explanation: "Disassemblers translate machine opcodes into low-level assembly (x86/ARM), while Ghidra's decompiler abstracts registers, stack frames, and control flows into structured C-like representations."
+      }
+    ]
+  },
+  autopsy: {
+    toolId: "autopsy",
+    title: "Autopsy Digital Forensics Challenge",
+    description: "Test your digital forensics artifact examination and evidence acquisition knowledge.",
+    passingScore: 1,
+    questions: [
+      {
+        id: "aut-q1",
+        type: "scenario-challenge",
+        badge: "Forensics Workflow",
+        prompt: "Scenario: An investigator receives an evidence hard drive from a seized workstation and must preserve original evidence integrity.",
+        question: "What critical action must be completed before creating and analyzing a disk image (.E01 or .raw) in Autopsy?",
+        options: [
+          { id: "a", text: "Connect the source drive through a hardware write-blocker and calculate cryptographic hashes (e.g., SHA-256)", correct: true },
+          { id: "b", text: "Format the suspect drive to verify read/write sectors" },
+          { id: "c", text: "Boot the suspect computer into Windows Safe Mode" },
+          { id: "d", text: "Delete temporary swap files to save disk space" }
+        ],
+        explanation: "Forensic soundness mandates that digital evidence is accessed via hardware write-blockers to prevent accidental alterations, and SHA-256 hashes must be verified to prove chain-of-custody integrity."
+      }
+    ]
+  }
+};
