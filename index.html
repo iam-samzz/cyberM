@@ -29,6 +29,7 @@
         <a data-page="resources" onclick="navigateTo('resources')">Resources</a>
         <a data-page="roadmap" onclick="navigateTo('roadmap')">Roadmap</a>
         <a data-page="tools" onclick="navigateTo('tools')">Tools</a>
+        <a data-page="profile" onclick="navigateTo('profile')">Profile</a>
         <a data-page="about" onclick="navigateTo('about')">About</a>
         <a data-page="contact" onclick="navigateTo('contact')">Contact</a>
       </div>
@@ -114,6 +115,23 @@
           </div>
         </div>
 
+        <div class="sidebar-section" id="sidebarProgressSection">
+          <h4 class="sidebar-section-title">Your Progress</h4>
+          <div class="sidebar-progress-card">
+            <div class="sidebar-progress-label">
+              <span>Overall Completion</span>
+              <strong id="sidebarProgressPercent">0%</strong>
+            </div>
+            <div class="sidebar-progress-bar-bg">
+              <div class="sidebar-progress-bar-fill" id="sidebarProgressBar" style="width: 0%"></div>
+            </div>
+            <div class="sidebar-progress-stats" id="sidebarProgressStats">
+              <span>0 Tools</span> • <span>0 Lessons</span> • <span>0 Nodes</span>
+            </div>
+            <button class="sidebar-resume-btn" id="sidebarResumeBtn" onclick="resumeLearning()">Continue Learning →</button>
+          </div>
+        </div>
+
         <div class="sidebar-tip">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           <p>Not sure where to start? Take the <strong>Cybersecurity Basics</strong> roadmap first.</p>
@@ -149,12 +167,12 @@
           </div>
         </div>
 
-        <!-- STATS ROW (change2: removed explicit resource count) -->
+        <!-- STATS ROW (Dynamic progress connected) -->
         <div class="stats-row">
           <div class="stat-item"><div class="stat-num">Curated</div><div class="stat-label">Learning Resources</div></div>
           <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Tools Covered</div></div>
           <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Vertical Roadmaps</div></div>
-          <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Free Learning</div></div>
+          <div class="stat-item"><div class="stat-num" id="statLearnerProgressNum">0%</div><div class="stat-label" id="statLearnerProgressLabel">Your Learning Progress</div></div>
         </div>
 
         <!-- ===== NEW: FEATURES SECTION (change1) ===== -->
@@ -359,7 +377,7 @@
       <div class="tools-stat-card"><span class="tools-stat-label">Total Tools</span><strong id="totalToolsCount">0</strong><span class="tools-stat-note">Available in HackPack</span></div>
       <div class="tools-stat-card"><span class="tools-stat-label">Categories</span><strong id="totalCategoriesCount">0</strong><span class="tools-stat-note">Security domains</span></div>
       <div class="tools-stat-card"><span class="tools-stat-label">Trending</span><strong id="trendingToolsCount">0</strong><span class="tools-stat-note">Popular starting points</span></div>
-      <div class="tools-stat-card"><span class="tools-stat-label">Learning Mode</span><strong>100%</strong><span class="tools-stat-note">Educational directory</span></div>
+      <div class="tools-stat-card"><span class="tools-stat-label">Learning Mode</span><strong id="toolsExploredStat">0 / 12 Explored</strong><span class="tools-stat-note">Educational directory</span></div>
     </div>
 
     <div class="tools-controls">
@@ -384,6 +402,112 @@
     </div>
     <div class="tools-category-summary" id="toolsCategorySummary"></div>
     <div class="tools-grid enhanced-tools-grid" id="toolsGrid"></div>
+  </section>
+
+  <!-- ========== PROFILE ========== -->
+  <section class="section" id="page-profile">
+    <div class="section-label">// User Profile & Stats</div>
+    <h2 class="section-title">Practitioner Profile</h2>
+    <p class="section-desc">Track your cybersecurity progression, view completed milestones, and review your learning achievements.</p>
+    <div class="section-divider"></div>
+
+    <div class="profile-layout">
+      <!-- Profile Header / Bio Card -->
+      <div class="profile-card profile-bio-card">
+        <div class="profile-bio-header">
+          <div class="profile-avatar">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="profile-bio-info">
+            <div class="profile-name-row">
+              <h3 id="profileDisplayName">Cyber Practitioner</h3>
+              <span class="profile-role-badge" id="profileRoleBadge">Security Learner</span>
+            </div>
+            <p class="profile-bio-text" id="profileBioText">Cybersecurity enthusiast tracking defensive and offensive tracks on HackPack.</p>
+            <div class="profile-meta-text">
+              <span id="profileJoinedDate">Joined: October 2026</span> • <span id="profileLastActive">Active Today</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary profile-edit-btn" id="profileEditBtn" onclick="toggleProfileEdit()">Edit Profile</button>
+        </div>
+
+        <!-- Inline Edit Form (Hidden by default) -->
+        <form class="profile-edit-form" id="profileEditForm" style="display:none;" onsubmit="handleProfileSave(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="profileInputName">Display Name</label>
+              <input type="text" id="profileInputName" maxlength="40" required>
+            </div>
+            <div class="form-group">
+              <label for="profileInputRole">Practitioner Title</label>
+              <input type="text" id="profileInputRole" maxlength="50" placeholder="e.g. Junior SOC Analyst">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="profileInputBio">Short Bio</label>
+            <textarea id="profileInputBio" maxlength="240" rows="3"></textarea>
+          </div>
+          <div class="profile-edit-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn btn-secondary" onclick="toggleProfileEdit(false)">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Overall Learning Progress Card -->
+      <div class="profile-card profile-stats-summary-card">
+        <div class="profile-stats-summary-header">
+          <h4>Overall Platform Progress</h4>
+          <strong class="profile-overall-pct" id="profileOverallPct">0%</strong>
+        </div>
+        <div class="profile-overall-bar-bg">
+          <div class="profile-overall-bar-fill" id="profileOverallBar" style="width: 0%;"></div>
+        </div>
+        <div class="profile-metrics-grid">
+          <div class="profile-metric-card">
+            <span class="profile-metric-label">Tools Explored</span>
+            <strong id="profileToolsMetric">0 / 12</strong>
+            <span class="profile-metric-sub">Interactive Directory</span>
+          </div>
+          <div class="profile-metric-card">
+            <span class="profile-metric-label">Roadmap Nodes</span>
+            <strong id="profileNodesMetric">0 / 25</strong>
+            <span class="profile-metric-sub">Across 6 Tracks</span>
+          </div>
+          <div class="profile-metric-card">
+            <span class="profile-metric-label">Lessons Completed</span>
+            <strong id="profileLessonsMetric">0 / 96</strong>
+            <span class="profile-metric-sub">Across 12 Courses</span>
+          </div>
+          <div class="profile-metric-card">
+            <span class="profile-metric-label">Quizzes Passed</span>
+            <strong id="profileQuizzesMetric">0 / 8</strong>
+            <span class="profile-metric-sub">Skills Challenges</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Roadmap Track Progress Breakdown -->
+      <div class="profile-section-block">
+        <h3 class="profile-block-title">Roadmap Progress Breakdown</h3>
+        <div class="profile-roadmaps-grid" id="profileRoadmapsGrid"></div>
+      </div>
+
+      <!-- Tool Courses Progress Breakdown -->
+      <div class="profile-section-block">
+        <h3 class="profile-block-title">Tool Courses Progress Breakdown</h3>
+        <div class="profile-courses-grid" id="profileCoursesGrid"></div>
+      </div>
+
+      <!-- Achievements & Milestones Showcase -->
+      <div class="profile-section-block">
+        <div class="profile-achievements-header">
+          <h3 class="profile-block-title">Verified Achievements</h3>
+          <span class="profile-achievements-count" id="profileAchievementsCount">0 of 8 Unlocked</span>
+        </div>
+        <div class="profile-achievements-grid" id="profileAchievementsGrid"></div>
+      </div>
+    </div>
   </section>
 
   <!-- ========== ABOUT ========== -->
@@ -488,6 +612,7 @@
         <a onclick="navigateTo('resources')">Resources</a>
         <a onclick="navigateTo('roadmap')">Roadmap</a>
         <a onclick="navigateTo('tools')">Tools</a>
+        <a onclick="navigateTo('profile')">Profile</a>
         <a onclick="navigateTo('about')">About</a>
         <a onclick="navigateTo('contact')">Contact</a>
       </div>
@@ -496,16 +621,30 @@
 
   <!-- ========== TOOL DETAIL MODAL ========== -->
   <div class="modal-overlay" id="toolModal">
-    <div class="modal">
+    <div class="modal" id="toolModalContent">
       <div class="modal-header">
-        <h2 id="modalTitle">Tool Name</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div>
+          <span class="modal-kicker">// Tool Overview & Practice</span>
+          <h2 id="modalTitle">Tool Name</h2>
+        </div>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" id="modalTabOverviewBtn" onclick="switchModalTab('overview')">Overview & Features</button>
+        <button class="modal-tab-btn" id="modalTabActivityBtn" onclick="switchModalTab('activity')">Interactive Skills Challenge <span class="tab-badge" id="modalTabActivityBadge">Quiz</span></button>
       </div>
       <div class="modal-body">
-        <div class="overview-text" id="modalOverview"></div>
-        <div class="modal-features" id="modalFeatures">
-          <h4>What You'll Learn</h4>
-          <ul id="modalFeatureList"></ul>
+        <div class="modal-tab-content active" id="modalTabOverview">
+          <div class="overview-text" id="modalOverview"></div>
+          <div class="modal-features" id="modalFeatures">
+            <h4>What You'll Learn</h4>
+            <ul id="modalFeatureList"></ul>
+          </div>
+        </div>
+        <div class="modal-tab-content" id="modalTabActivity">
+          <div class="tool-activity-container" id="toolActivityContainer">
+            <!-- Rendered by JS -->
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -513,7 +652,7 @@
           Enroll in Training
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
-        <button class="btn btn-secondary" onclick="closeModal(); navigateTo('courses');">View Courses</button>
+        <button class="btn btn-secondary" id="modalViewCoursesBtn" onclick="handleModalViewCourses()">View Courses</button>
       </div>
     </div>
   </div>
@@ -547,6 +686,9 @@
     </form>
     <div class="assistant-disclaimer">Demo guidance only. Use security tools only on systems you own or are authorized to test.</div>
   </aside>
+
+  <!-- ========== TOAST NOTIFICATION CONTAINER ========== -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
   <!-- ========== SCRIPTS ========== -->
   <script src="js/data.js"></script>
