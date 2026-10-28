@@ -28,7 +28,6 @@
         <a data-page="courses" onclick="navigateTo('courses')">Courses</a>
         <a data-page="resources" onclick="navigateTo('resources')">Resources</a>
         <a data-page="roadmap" onclick="navigateTo('roadmap')">Roadmap</a>
-        <a data-page="tools" onclick="navigateTo('tools')">Tools</a>
         <a data-page="about" onclick="navigateTo('about')">About</a>
         <a data-page="contact" onclick="navigateTo('contact')">Contact</a>
       </div>
@@ -76,15 +75,6 @@
             <div>
               <span class="sidebar-link-title">Resources</span>
               <span class="sidebar-link-desc">Curated links</span>
-            </div>
-          </a>
-          <a class="sidebar-link" onclick="navigateTo('tools')">
-            <div class="sidebar-link-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            </div>
-            <div>
-              <span class="sidebar-link-title">Tools Directory</span>
-              <span class="sidebar-link-desc">Explore security tools</span>
             </div>
           </a>
         </nav>
@@ -147,14 +137,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- STATS ROW (change2: removed explicit resource count) -->
-        <div class="stats-row">
-          <div class="stat-item"><div class="stat-num">Curated</div><div class="stat-label">Learning Resources</div></div>
-          <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Tools Covered</div></div>
-          <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Vertical Roadmaps</div></div>
-          <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Free Learning</div></div>
         </div>
 
         <!-- ===== NEW: FEATURES SECTION (change1) ===== -->
@@ -231,7 +213,6 @@
                 Browse Courses
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </button>
-              <button class="btn btn-secondary" onclick="navigateTo('tools')">Explore Tools</button>
             </div>
           </div>
           <div class="home-cta-visual">
@@ -348,44 +329,6 @@
     </div>
   </section>
 
-  <!-- ========== TOOLS ========== -->
-  <section class="section" id="page-tools">
-    <div class="section-label">// Tools Directory</div>
-    <h2 class="section-title">Cybersecurity Tools</h2>
-    <p class="section-desc">Explore the tools in HackPack by security category. Search, filter, compare basic use cases, and open a detailed overview before practicing in an authorized lab.</p>
-    <div class="section-divider"></div>
-
-    <div class="tools-dashboard-stats" id="toolsStats">
-      <div class="tools-stat-card"><span class="tools-stat-label">Total Tools</span><strong id="totalToolsCount">0</strong><span class="tools-stat-note">Available in HackPack</span></div>
-      <div class="tools-stat-card"><span class="tools-stat-label">Categories</span><strong id="totalCategoriesCount">0</strong><span class="tools-stat-note">Security domains</span></div>
-      <div class="tools-stat-card"><span class="tools-stat-label">Trending</span><strong id="trendingToolsCount">0</strong><span class="tools-stat-note">Popular starting points</span></div>
-      <div class="tools-stat-card"><span class="tools-stat-label">Learning Mode</span><strong>100%</strong><span class="tools-stat-note">Educational directory</span></div>
-    </div>
-
-    <div class="tools-controls">
-      <div class="tools-search-box">
-        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-        <input id="toolSearchInput" type="search" placeholder="Search tools, categories, or use cases..." aria-label="Search cybersecurity tools">
-      </div>
-      <select id="toolCategoryFilter" aria-label="Filter tools by category">
-        <option value="all">All categories</option>
-      </select>
-      <select id="toolLevelFilter" aria-label="Filter tools by difficulty">
-        <option value="all">All levels</option>
-        <option value="Beginner">Beginner</option>
-        <option value="Intermediate">Intermediate</option>
-        <option value="Advanced">Advanced</option>
-      </select>
-    </div>
-
-    <div class="tools-directory-heading">
-      <div><h3>Tool Directory</h3><p id="toolsResultSummary">Showing all tools</p></div>
-      <button class="btn btn-secondary tools-reset-btn" id="resetToolFilters">Reset filters</button>
-    </div>
-    <div class="tools-category-summary" id="toolsCategorySummary"></div>
-    <div class="tools-grid enhanced-tools-grid" id="toolsGrid"></div>
-  </section>
-
   <!-- ========== ABOUT ========== -->
   <section class="section" id="page-about">
     <div class="section-label">// About</div>
@@ -487,36 +430,11 @@
         <a onclick="navigateTo('courses')">Courses</a>
         <a onclick="navigateTo('resources')">Resources</a>
         <a onclick="navigateTo('roadmap')">Roadmap</a>
-        <a onclick="navigateTo('tools')">Tools</a>
         <a onclick="navigateTo('about')">About</a>
         <a onclick="navigateTo('contact')">Contact</a>
       </div>
     </div>
   </footer>
-
-  <!-- ========== TOOL DETAIL MODAL ========== -->
-  <div class="modal-overlay" id="toolModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h2 id="modalTitle">Tool Name</h2>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="overview-text" id="modalOverview"></div>
-        <div class="modal-features" id="modalFeatures">
-          <h4>What You'll Learn</h4>
-          <ul id="modalFeatureList"></ul>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" onclick="enrollTraining()">
-          Enroll in Training
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </button>
-        <button class="btn btn-secondary" onclick="closeModal(); navigateTo('courses');">View Courses</button>
-      </div>
-    </div>
-  </div>
 
   <!-- ========== HACKPACK ASSISTANT ========== -->
   <button class="assistant-launcher" id="assistantLauncher" aria-label="Open HackPack Assistant" title="HackPack Assistant">
@@ -537,7 +455,6 @@
       <button data-assistant-action="career">Start my cybersecurity journey</button>
       <button data-assistant-action="courses">Explore tool courses</button>
       <button data-assistant-action="resources">Find learning resources</button>
-      <button data-assistant-action="tools">Explore security tools</button>
     </div>
     <form class="assistant-input-row" id="assistantForm">
       <input id="assistantInput" type="text" placeholder="Ask about careers, courses or tools..." autocomplete="off" />
