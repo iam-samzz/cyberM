@@ -269,88 +269,6 @@ function playLessonPlaceholder(lessonId) {
   }
 }
 
-/* ========== TOOLS DIRECTORY RENDERER ========== */
-function renderTools() {
-  const grid = document.getElementById('toolsGrid');
-  if (!grid) return;
-
-  const searchTerm = document.getElementById('toolSearchInput').value.toLowerCase().trim();
-  const categoryTerm = document.getElementById('toolCategoryFilter').value;
-  const levelTerm = document.getElementById('toolLevelFilter').value;
-
-  const filtered = tools.filter(t => {
-    const matchesCategory = categoryTerm === 'all' || t.category === categoryTerm;
-    const matchesLevel = levelTerm === 'all' || t.level === levelTerm;
-    const matchesSearch = !searchTerm ||
-      t.name.toLowerCase().includes(searchTerm) ||
-      t.category.toLowerCase().includes(searchTerm) ||
-      t.brief.toLowerCase().includes(searchTerm);
-    return matchesCategory && matchesLevel && matchesSearch;
-  });
-
-  document.getElementById('totalToolsCount').textContent = tools.length;
-  document.getElementById('totalCategoriesCount').textContent = new Set(tools.map(t => t.category)).size;
-  document.getElementById('trendingToolsCount').textContent = tools.filter(t => t.trending).length;
-  document.getElementById('toolsResultSummary').textContent = `Showing ${filtered.length} of ${tools.length} tools`;
-
-  grid.innerHTML = filtered.map(t => `
-    <div class="tool-card" onclick="openToolModal('${t.id}')">
-      <div class="tool-card-topline">
-        <span class="tool-level ${t.level.toLowerCase()}">${t.level}</span>
-        ${t.trending ? '<span class="tool-trending">Popular</span>' : ''}
-      </div>
-      <div class="enhanced-tool-title-row">
-        <div class="tool-icon">${t.icon}</div>
-        <div>
-          <h3>${t.name}</h3>
-          <p class="tool-cat">${t.category}</p>
-        </div>
-      </div>
-      <p class="tool-brief">${t.brief}</p>
-      <button class="view-btn">
-        View Overview & Features
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </button>
-    </div>
-  `).join('');
-}
-
-function populateToolCategoryFilter() {
-  const select = document.getElementById('toolCategoryFilter');
-  if (!select) return;
-  const categories = Array.from(new Set(tools.map(t => t.category)));
-  categories.forEach(cat => {
-    const opt = document.createElement('option');
-    opt.value = cat;
-    opt.textContent = cat;
-    select.appendChild(opt);
-  });
-}
-
-/* ========== TOOL MODAL CONTROLLER ========== */
-function openToolModal(toolId) {
-  const tool = tools.find(t => t.id === toolId);
-  if (!tool) return;
-
-  document.getElementById('modalTitle').textContent = tool.name;
-  document.getElementById('modalOverview').innerHTML = tool.overview;
-
-  const featureList = document.getElementById('modalFeatureList');
-  featureList.innerHTML = tool.features.map(f => `<li>${f}</li>`).join('');
-
-  document.getElementById('toolModal').classList.add('active');
-}
-
-function closeModal() {
-  document.getElementById('toolModal').classList.remove('active');
-}
-
-function enrollTraining() {
-  closeModal();
-  navigateTo('contact');
-  document.getElementById('cSubject').value = 'tool-training';
-  document.getElementById('cMessage').value = `I want to enroll in ${document.getElementById('modalTitle').textContent} tool training.`;
-}
 
 /* ========== CONTACT FORM CONTROLLER ========== */
 function handleContact(e) {
@@ -412,12 +330,6 @@ function setupAssistant() {
             addAssistantMessage('bot', 'We have curated free learning resources including OWASP Top 10, NIST frameworks, PortSwigger Academy, and TryHackMe. Taking you there now!');
             navigateTo('resources');
           }, 500);
-        } else if (action === 'tools') {
-          addAssistantMessage('user', 'Explore security tools');
-          setTimeout(() => {
-            addAssistantMessage('bot', 'Explore our interactive Tools Directory to learn Nmap, Burp Suite, Metasploit, Wireshark, Splunk, and more. Taking you there now!');
-            navigateTo('tools');
-          }, 500);
         }
       }
     });
@@ -460,7 +372,7 @@ function respondToUser(query) {
     navigateTo('roadmap');
     switchRoadmap('grc');
   } else {
-    addAssistantMessage('bot', "I can guide you through our site! You can explore tool courses, curated learning resources, test tools in our directory, or follow one of our vertical career roadmaps.");
+    addAssistantMessage('bot', "I can guide you through our site! You can explore tool courses, curated learning resources, or follow one of our vertical career roadmaps.");
   }
 }
 
@@ -532,25 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Courses
   renderCourseToolNav();
   renderCourseContent();
-
-  // Initialize Tools Directory
-  populateToolCategoryFilter();
-  renderTools();
-  const toolSearchInput = document.getElementById('toolSearchInput');
-  const toolCategoryFilter = document.getElementById('toolCategoryFilter');
-  const toolLevelFilter = document.getElementById('toolLevelFilter');
-  const resetToolFilters = document.getElementById('resetToolFilters');
-  if (toolSearchInput) toolSearchInput.addEventListener('input', renderTools);
-  if (toolCategoryFilter) toolCategoryFilter.addEventListener('change', renderTools);
-  if (toolLevelFilter) toolLevelFilter.addEventListener('change', renderTools);
-  if (resetToolFilters) {
-    resetToolFilters.addEventListener('click', () => {
-      document.getElementById('toolSearchInput').value = '';
-      document.getElementById('toolCategoryFilter').value = 'all';
-      document.getElementById('toolLevelFilter').value = 'all';
-      renderTools();
-    });
-  }
 
   // Initialize Assistant
   setupAssistant();
