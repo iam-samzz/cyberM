@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HackPack — Cybersecurity Learning Platform</title>
+  <title>cyberM — Cybersecurity Learning Platform</title>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +21,7 @@
   <nav class="navbar">
     <div class="nav-inner">
       <a class="nav-brand" onclick="navigateTo('home')">
-        <img id="brandLogo" src="assets/logo-dark-theme.png" alt="HackPack Logo" class="brand-logo">
+        <img id="brandLogo" src="assets/logo-dark-theme.png" alt="cyberM Logo" class="brand-logo">
       </a>
       <div class="nav-links" id="navLinks">
         <a class="active" data-page="home" onclick="navigateTo('home')">Home</a>
@@ -43,7 +43,7 @@
   <!-- ========== HOME ========== -->
   <section class="section active" id="page-home">
     <div class="home-layout">
-      <!-- ===== LEFT SIDEBAR (Desktop Only) ===== -->
+      <!-- ===== LEFT SIDEBAR ===== -->
       <aside class="home-sidebar" id="homeSidebar">
         <div class="sidebar-header">
           <span class="sidebar-kicker">// Quick Access</span>
@@ -112,7 +112,6 @@
 
       <!-- ===== MAIN HOME CONTENT ===== -->
       <div class="home-main">
-        <!-- HERO (existing, unchanged content) -->
         <div class="hero">
           <div class="hero-content">
             <div class="hero-badge"><span class="dot"></span> Cybersecurity Learning Platform</div>
@@ -139,9 +138,8 @@
           </div>
         </div>
 
-        <!-- ===== NEW: FEATURES SECTION (change1) ===== -->
         <div class="home-extended-section">
-          <div class="section-label">// Why HackPack</div>
+          <div class="section-label">// Why cyberM</div>
           <h2 class="section-title" style="font-size:1.6rem; margin-bottom:8px;">Built for real security careers</h2>
           <p class="section-desc" style="margin-bottom:28px;">We don't just dump links. We give you a path, the tools, and the guidance to move from beginner to practitioner.</p>
 
@@ -177,7 +175,6 @@
           </div>
         </div>
 
-        <!-- ===== NEW: HOW IT WORKS (change1) ===== -->
         <div class="home-extended-section">
           <div class="section-label">// How It Works</div>
           <h2 class="section-title" style="font-size:1.6rem; margin-bottom:8px;">Your path in three steps</h2>
@@ -202,7 +199,6 @@
           </div>
         </div>
 
-        <!-- ===== NEW: COURSE PROMO (change1) ===== -->
         <div class="home-cta-card">
           <div class="home-cta-content">
             <div class="home-cta-badge">// Tool Courses</div>
@@ -226,21 +222,77 @@
     </div>
   </section>
 
-  <!-- ========== COURSES PAGE (change4) ========== -->
+  <!-- ========== COURSES PAGE ========== -->
   <section class="section" id="page-courses">
     <div class="section-label">// Tool Courses</div>
     <h2 class="section-title">Tool Learning Courses</h2>
-    <p class="section-desc">Master industry-standard cybersecurity tools with video-based courses. Select a tool below to start learning.</p>
+    <p class="section-desc">Master industry-standard cybersecurity tools with video-based courses. Choose your team, select a tool, and start learning.</p>
     <div class="section-divider"></div>
 
-    <!-- Course Tool Selector -->
-    <div class="course-tool-nav" id="courseToolNav">
-      <!-- Tool buttons rendered by JS -->
+    <!-- Team Tabs -->
+    <div class="team-tabs" id="courseTeamTabs">
+      <button class="team-tab active" data-team="red" onclick="setCourseTeam('red', this)">
+        <span class="team-tab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
+        </span>
+        <div class="team-tab-text">
+          <span class="team-tab-label">Red Team</span>
+          <span class="team-tab-desc">Offensive Security Tooling</span>
+        </div>
+      </button>
+      <button class="team-tab" data-team="blue" onclick="setCourseTeam('blue', this)">
+        <span class="team-tab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
+        <div class="team-tab-text">
+          <span class="team-tab-label">Blue Team</span>
+          <span class="team-tab-desc">Defensive Security Tooling</span>
+        </div>
+      </button>
     </div>
 
-    <!-- Course Content Area -->
-    <div class="course-content" id="courseContent">
-      <!-- Rendered by JS -->
+    <!-- Landing View -->
+    <div id="courseLandingView">
+      <div class="course-tool-nav" id="courseToolNav"></div>
+      <div class="course-content" id="courseContent"></div>
+    </div>
+
+    <!-- LMS Player View -->
+    <div id="lmsView" class="lms-view" style="display:none;">
+      <div class="lms-topbar">
+        <button class="lms-back-btn" onclick="exitLms()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Back to Courses</span>
+        </button>
+        <div class="lms-topbar-title" id="lmsTopbarTitle"></div>
+        <div class="lms-topbar-progress">
+          <div class="lms-progress-track"><div class="lms-progress-fill" id="lmsProgressFill"></div></div>
+          <span class="lms-progress-text" id="lmsProgressText">0%</span>
+        </div>
+      </div>
+
+      <div class="lms-grid">
+        <div class="lms-main-col">
+          <div class="lms-player" id="lmsPlayer"></div>
+          <div class="lms-current-info">
+            <h2 id="lmsCurrentTitle"></h2>
+            <p id="lmsCurrentDesc"></p>
+          </div>
+          <div class="lms-tabs" id="lmsTabs">
+            <button class="lms-tab active" data-lms-tab="overview" onclick="switchLmsTab('overview')">Overview</button>
+            <button class="lms-tab" data-lms-tab="resources" onclick="switchLmsTab('resources')">Resources</button>
+            <button class="lms-tab" data-lms-tab="assessment" onclick="switchLmsTab('assessment')">Assessment</button>
+          </div>
+          <div class="lms-tab-panel" id="lmsTabPanel"></div>
+        </div>
+        <aside class="lms-sidebar">
+          <div class="lms-sidebar-header">
+            <h3 id="lmsSidebarTitle"></h3>
+            <div class="lms-sidebar-meta" id="lmsSidebarMeta"></div>
+          </div>
+          <div class="lms-accordion" id="lmsAccordion"></div>
+        </aside>
+      </div>
     </div>
   </section>
 
@@ -285,36 +337,38 @@
   <section class="section" id="page-roadmap">
     <div class="section-label">// Career Paths & Learning Flow</div>
     <h2 class="section-title">Cybersecurity Vertical Roadmaps</h2>
-    <p class="section-desc">Switch between foundational basics and professional track roadmaps. Follow node-by-node vertical progression to build industry-ready skills.</p>
+    <p class="section-desc">Choose your team, then follow node-by-node vertical progression to build industry-ready skills.</p>
     <div class="section-divider"></div>
 
-    <!-- Switcher Bar for Roadmaps -->
-    <div class="roadmap-navigation-bar" id="roadmapNavButtons">
-      <button class="roadmap-nav-btn active" data-roadmap="basics" onclick="switchRoadmap('basics')">
-        <span>Cybersecurity Basics</span>
-        <span class="main-tag">Main</span>
+    <!-- Team Tabs -->
+    <div class="team-tabs" id="roadmapTeamTabs">
+      <button class="team-tab active" data-team="red" onclick="setRoadmapTeam('red', this)">
+        <span class="team-tab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
+        </span>
+        <div class="team-tab-text">
+          <span class="team-tab-label">Red Team</span>
+          <span class="team-tab-desc">Offensive Security Roadmaps</span>
+        </div>
       </button>
-      <button class="roadmap-nav-btn" data-roadmap="soc" onclick="switchRoadmap('soc')">
-        <span>SOC Analyst</span>
-      </button>
-      <button class="roadmap-nav-btn" data-roadmap="pentest" onclick="switchRoadmap('pentest')">
-        <span>Penetration Tester</span>
-      </button>
-      <button class="roadmap-nav-btn" data-roadmap="cloud" onclick="switchRoadmap('cloud')">
-        <span>Cloud Security Engineer</span>
-      </button>
-      <button class="roadmap-nav-btn" data-roadmap="dfir" onclick="switchRoadmap('dfir')">
-        <span>DFIR Specialist</span>
-      </button>
-      <button class="roadmap-nav-btn" data-roadmap="grc" onclick="switchRoadmap('grc')">
-        <span>GRC Analyst</span>
+      <button class="team-tab" data-team="blue" onclick="setRoadmapTeam('blue', this)">
+        <span class="team-tab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
+        <div class="team-tab-text">
+          <span class="team-tab-label">Blue Team</span>
+          <span class="team-tab-desc">Defensive Security Roadmaps</span>
+        </div>
       </button>
     </div>
+
+    <!-- Roadmap Switcher -->
+    <div class="roadmap-navigation-bar" id="roadmapNavButtons"></div>
 
     <!-- Active Roadmap Header -->
     <div class="roadmap-active-header" id="roadmapHeader"></div>
 
-    <!-- Vertical Roadmap Flow Container -->
+    <!-- Vertical Roadmap Flow -->
     <div class="vertical-roadmap-wrapper">
       <div class="vertical-roadmap-line"></div>
       <div id="verticalRoadmapNodes"></div>
@@ -324,14 +378,14 @@
   <!-- ========== ABOUT ========== -->
   <section class="section" id="page-about">
     <div class="section-label">// About</div>
-    <h2 class="section-title">About HackPack</h2>
+    <h2 class="section-title">About cyberM</h2>
     <p class="section-desc">A platform built to simplify cybersecurity learning.</p>
     <div class="section-divider"></div>
 
     <div class="about-content">
       <div class="about-text">
         <h3>Who We Are</h3>
-        <p>HackPack is a cybersecurity learning platform. We curate the best open resources, build structured vertical career roadmaps, and offer hands-on tool training for aspiring and professional security practitioners.</p>
+        <p>cyberM is a cybersecurity learning platform. We curate the best open resources, build structured vertical career roadmaps, and offer hands-on tool training for aspiring and professional security practitioners.</p>
         <h3>What We Do</h3>
         <p>We don't sell software. We sell knowledge. Our tool training programs teach you how to use industry-standard security tools effectively — from Nmap to Burp Suite, Metasploit to Wireshark.</p>
         <h3>Our Mission</h3>
@@ -373,7 +427,7 @@
       <div class="contact-info">
         <div class="contact-item">
           <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-          <div><h4>Email</h4><p>contact@hackpack.io</p></div>
+          <div><h4>Email</h4><p>contact@cyberM.io</p></div>
         </div>
         <div class="contact-item">
           <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
@@ -417,7 +471,7 @@
   <!-- ========== FOOTER ========== -->
   <footer class="site-footer">
     <div class="footer-inner">
-      <p>© 2026 HackPack. All rights reserved.</p>
+      <p>© 2026 cyberM. All rights reserved.</p>
       <div class="footer-links">
         <a onclick="navigateTo('courses')">Courses</a>
         <a onclick="navigateTo('resources')">Resources</a>
@@ -428,15 +482,15 @@
     </div>
   </footer>
 
-  <!-- ========== HACKPACK ASSISTANT ========== -->
-  <button class="assistant-launcher" id="assistantLauncher" aria-label="Open HackPack Assistant" title="HackPack Assistant">
+  <!-- ========== cyberM ASSISTANT ========== -->
+  <button class="assistant-launcher" id="assistantLauncher" aria-label="Open cyberM Assistant" title="cyberM Assistant">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>
   </button>
 
-  <aside class="assistant-panel" id="assistantPanel" aria-label="HackPack Assistant" aria-hidden="true">
+  <aside class="assistant-panel" id="assistantPanel" aria-label="cyberM Assistant" aria-hidden="true">
     <div class="assistant-header">
       <div>
-        <div class="assistant-kicker">// HackPack Assistant</div>
+        <div class="assistant-kicker">// cyberM Assistant</div>
         <h2>How can I help?</h2>
       </div>
       <button class="assistant-close" id="assistantClose" aria-label="Close assistant">✕</button>
