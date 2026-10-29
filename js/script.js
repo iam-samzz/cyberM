@@ -1,15 +1,22 @@
 /* ========== STATE MANAGEMENT ========== */
 let currentRoadmapId = "basics";
+let currentRoadmapTeam = "red";
 let selectedResourceCategory = "all";
 let currentCourseToolId = "nmap";
+let currentCourseTeam = "red";
+
+/* LMS state */
+let currentLmsCourseId = null;
+let currentLmsLessonId = null;
+let lmsCompletedLessons = new Set();
+let lmsOpenModules = new Set();
+let currentLmsTab = "overview";
 
 /* ========== NAVIGATION CONTROLLER ========== */
 function navigateTo(pageId) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   const targetPage = document.getElementById('page-' + pageId);
-  if (targetPage) {
-    targetPage.classList.add('active');
-  }
+  if (targetPage) targetPage.classList.add('active');
 
   document.querySelectorAll('.nav-links a').forEach(a => {
     a.classList.toggle('active', a.getAttribute('data-page') === pageId);
@@ -23,16 +30,52 @@ function navigateTo(pageId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ========== ROADMAP RENDERER ========== */
+/* ========== TEAM TABS — ROADMAPS ========== */
+function updateRoadmapTeamTabsUI() {
+  document.querySelectorAll('#roadmapTeamTabs .team-tab').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-team') === currentRoadmapTeam);
+  });
+}
+
+function setRoadmapTeam(team, btn) {
+  currentRoadmapTeam = team;
+  updateRoadmapTeamTabsUI();
+  renderRoadmapNav();
+  const first = Object.values(roadmapsData).find(r => r.team === team) ||
+                Object.values(roadmapsData).find(r => r.team === 'foundation');
+  if (first) switchRoadmap(first.id);
+}
+
+function renderRoadmapNav() {
+  const nav = document.getElementById('roadmapNavButtons');
+  if (!nav) return;
+  const visible = Object.values(roadmapsData).filter(r =>
+    r.team === currentRoadmapTeam || r.team === 'foundation'
+  );
+  nav.innerHTML = visible.map(r => `
+    <button class="roadmap-nav-btn ${r.id === currentRoadmapId ? 'active' : ''}" data-roadmap="${r.id}" onclick="switchRoadmap('${r.id}')">
+      <span>${r.title}</span>
+      ${r.team === 'foundation' ? '<span class="main-tag">Foundation</span>' : ''}
+    </button>
+  `).join('');
+}
+
 function switchRoadmap(roadmapId) {
   if (!roadmapsData[roadmapId]) return;
-  currentRoadmapId = roadmapId;
-
-  document.querySelectorAll('.roadmap-nav-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-roadmap') === roadmapId);
-  });
-
   const data = roadmapsData[roadmapId];
+
+  // If roadmap belongs to a specific team and it differs, switch team tab
+  if (data.team !== 'foundation' && data.team !== currentRoadmapTeam) {
+    currentRoadmapTeam = data.team;
+    updateRoadmapTeamTabsUI();
+    renderRoadmapNav();
+  } else {
+    document.querySelectorAll('.roadmap-nav-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-roadmap') === roadmapId);
+    });
+  }
+
+  currentRoadmapId = roadmapId;
 
   const headerEl = document.getElementById('roadmapHeader');
   if (headerEl) {
@@ -62,9 +105,7 @@ function switchRoadmap(roadmapId) {
           ${node.topics.map(topic => `
             <div class="vertical-topic-card">
               <div class="vertical-topic-card-title">${topic.category}</div>
-              <ul>
-                ${topic.items.map(item => `<li>${item}</li>`).join('')}
-              </ul>
+              <ul>${topic.items.map(item => `<li>${item}</li>`).join('')}</ul>
             </div>
           `).join('')}
         </div>
@@ -93,9 +134,24 @@ function switchRoadmap(roadmapId) {
       ${topicsHTML}
       ${toolsHTML}
     `;
-
     nodesContainer.appendChild(nodeCard);
   });
+}
+
+/* ========== TEAM TABS — COURSES ========== */
+function updateCourseTeamTabsUI() {
+  document.querySelectorAll('#courseTeamTabs .team-tab').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-team') === currentCourseTeam);
+  });
+}
+
+function setCourseTeam(team, btn) {
+  currentCourseTeam = team;
+  updateCourseTeamTabsUI();
+  const first = Object.values(coursesData).find(c => c.team === team);
+  if (first) currentCourseToolId = first.id;
+  renderCourseToolNav();
+  renderCourseContent();
 }
 
 /* ========== RESOURCES RENDERER & FILTERS ========== */
@@ -158,26 +214,27 @@ function filterResourceCategory(cat, btn) {
   renderResources();
 }
 
-/* ========== COURSE PAGE RENDERER ========== */
+/* ========== COURSES PAGE — LANDING VIEW ========== */
 function renderCourseToolNav() {
   const nav = document.getElementById('courseToolNav');
   if (!nav) return;
-
-  const toolIds = Object.keys(coursesData);
-  nav.innerHTML = toolIds.map(id => {
-    const c = coursesData[id];
-    return `
-      <button class="course-tool-btn ${id === currentCourseToolId ? 'active' : ''}" data-course-tool="${id}" onclick="selectCourseTool('${id}')">
-        <span class="course-tool-icon">${c.icon}</span>
-        <span class="course-tool-name">${c.name}</span>
-        <span class="course-tool-level ${c.level.toLowerCase()}">${c.level}</span>
-      </button>
-    `;
-  }).join('');
+  const visible = Object.values(coursesData).filter(c => c.team === currentCourseTeam);
+  nav.innerHTML = visible.map(c => `
+    <button class="course-tool-btn ${c.id === currentCourseToolId ? 'active' : ''}" data-course-tool="${c.id}" onclick="selectCourseTool('${c.id}')">
+      <span class="course-tool-icon">${c.icon}</span>
+      <span class="course-tool-name">${c.name}</span>
+      <span class="course-tool-level ${c.level.toLowerCase()}">${c.level}</span>
+    </button>
+  `).join('');
 }
 
 function selectCourseTool(toolId) {
   if (!coursesData[toolId]) return;
+  const course = coursesData[toolId];
+  if (course.team !== currentCourseTeam) {
+    currentCourseTeam = course.team;
+    updateCourseTeamTabsUI();
+  }
   currentCourseToolId = toolId;
   renderCourseToolNav();
   renderCourseContent();
@@ -187,38 +244,12 @@ function selectCourseTool(toolId) {
 function renderCourseContent() {
   const container = document.getElementById('courseContent');
   if (!container) return;
-
   const course = coursesData[currentCourseToolId];
   if (!course) {
     container.innerHTML = '<p class="no-results">Course not found.</p>';
     return;
   }
-
-  // Build lesson cards — video placeholders with data attributes for backend integration
-  const lessonsHTML = course.lessons.map((lesson, idx) => `
-    <div class="course-lesson-card" data-tool="${course.id}" data-lesson="${lesson.id}">
-      <div class="course-video-placeholder" data-video-slot="${lesson.id}">
-        <div class="course-video-play">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </div>
-        <span class="course-video-label">Video Placeholder</span>
-        <span class="course-video-duration">${lesson.duration}</span>
-      </div>
-      <div class="course-lesson-body">
-        <div class="course-lesson-meta">
-          <span class="course-lesson-number">Lesson ${idx + 1}</span>
-          <span class="course-lesson-duration">${lesson.duration}</span>
-        </div>
-        <h4 class="course-lesson-title">${lesson.title}</h4>
-        <div class="course-lesson-actions">
-          <button class="btn btn-secondary course-lesson-btn" onclick="playLessonPlaceholder('${lesson.id}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Watch Lesson
-          </button>
-        </div>
-      </div>
-    </div>
-  `).join('');
+  const totalLessons = course.modules.reduce((s, m) => s + m.lessons.length, 0);
 
   container.innerHTML = `
     <div class="course-header-card">
@@ -228,47 +259,345 @@ function renderCourseContent() {
           <div class="course-header-meta">
             <span class="course-header-category">${course.category}</span>
             <span class="course-header-level ${course.level.toLowerCase()}">${course.level}</span>
+            <span class="team-badge ${course.team}">${course.team === 'red' ? 'Red Team' : 'Blue Team'}</span>
           </div>
           <h3 class="course-header-title">${course.name}</h3>
           <p class="course-header-desc">${course.description}</p>
           <div class="course-header-stats">
-            <span><strong>${course.lessons.length}</strong> Lessons</span>
+            <span><strong>${course.modules.length}</strong> Modules</span>
+            <span><strong>${totalLessons}</strong> Lessons</span>
             <span><strong>${course.totalDuration}</strong> Total</span>
             <span><strong>${course.instructor}</strong> Instructor</span>
           </div>
         </div>
       </div>
       <div class="course-header-actions">
-        <button class="btn btn-primary" onclick="navigateTo('contact'); document.getElementById('cSubject').value='tool-training'; document.getElementById('cMessage').value='I want to subscribe to the ${course.name} course.';">
-          Subscribe to Course
+        <button class="btn btn-primary" onclick="enrollCourse('${course.id}')">
+          Enroll Now
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
       </div>
     </div>
-    <div class="course-lessons-grid">
-      ${lessonsHTML}
-    </div>
-    <div class="course-backend-note">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      <p>Video placeholders are ready for backend integration. Each slot has <code>data-video-slot</code> attributes matching the course data.</p>
+
+    <div class="course-preview-modules">
+      <h4 class="course-preview-heading">Course Curriculum</h4>
+      ${course.modules.map((mod, i) => `
+        <div class="course-preview-module">
+          <div class="course-preview-module-header">
+            <span class="course-preview-module-num">Module ${i + 1}</span>
+            <span class="course-preview-module-title">${mod.title}</span>
+            <span class="course-preview-module-meta">${mod.lessons.length} lessons</span>
+          </div>
+          <ul class="course-preview-lesson-list">
+            ${mod.lessons.map(l => `
+              <li>
+                <span class="course-preview-lesson-icon">▶</span>
+                <span class="course-preview-lesson-title">${l.title}</span>
+                <span class="course-preview-lesson-duration">${l.duration}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `).join('')}
     </div>
   `;
 }
 
-function playLessonPlaceholder(lessonId) {
-  // Backend integration point: replace with real video player
-  const slot = document.querySelector(`[data-video-slot="${lessonId}"]`);
-  if (slot) {
-    slot.innerHTML = `
-      <div class="course-video-backend-msg">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        <p>Video embed slot ready</p>
-        <small>Backend team: inject iframe or video source here.</small>
+/* ========== LMS PLAYER ========== */
+function lmsStorageKey(courseId) { return `cyberM_lms_progress_${courseId}`; }
+
+function getCompletedLessons(courseId) {
+  try {
+    const stored = localStorage.getItem(lmsStorageKey(courseId));
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch { return new Set(); }
+}
+
+function saveCompletedLessons(courseId, set) {
+  try { localStorage.setItem(lmsStorageKey(courseId), JSON.stringify([...set])); } catch {}
+}
+
+function getCourseTotalLessons(course) {
+  return course.modules.reduce((s, m) => s + m.lessons.length, 0);
+}
+
+function findLessonContext(course, lessonId) {
+  for (const mod of course.modules) {
+    const lesson = mod.lessons.find(l => l.id === lessonId);
+    if (lesson) return { module: mod, lesson };
+  }
+  return null;
+}
+
+function enrollCourse(courseId) {
+  if (!coursesData[courseId]) return;
+  currentLmsCourseId = courseId;
+  currentLmsTab = "overview";
+  lmsCompletedLessons = getCompletedLessons(courseId);
+  const course = coursesData[courseId];
+  lmsOpenModules = new Set([course.modules[0].id]);
+  currentLmsLessonId = course.modules[0].lessons[0].id;
+
+  document.getElementById('courseLandingView').style.display = 'none';
+  document.getElementById('lmsView').style.display = 'block';
+
+  renderLms();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function exitLms() {
+  if (currentLmsCourseId) saveCompletedLessons(currentLmsCourseId, lmsCompletedLessons);
+  document.getElementById('lmsView').style.display = 'none';
+  document.getElementById('courseLandingView').style.display = 'block';
+  renderCourseContent();
+}
+
+function renderLms() {
+  const course = coursesData[currentLmsCourseId];
+  if (!course) return;
+
+  // Topbar
+  document.getElementById('lmsTopbarTitle').textContent = course.name;
+
+  // Progress
+  const total = getCourseTotalLessons(course);
+  const done = course.modules.reduce((s, m) => s + m.lessons.filter(l => lmsCompletedLessons.has(l.id)).length, 0);
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('lmsProgressFill').style.width = pct + '%';
+  document.getElementById('lmsProgressText').textContent = pct + '%';
+
+  // Sidebar title & meta
+  document.getElementById('lmsSidebarTitle').textContent = course.name;
+  document.getElementById('lmsSidebarMeta').textContent = `${course.modules.length} modules · ${total} lessons · ${course.totalDuration}`;
+
+  // Player
+  renderLmsPlayer();
+  // Sidebar accordion
+  renderLmsSidebar();
+  // Tabs
+  renderLmsTab();
+}
+
+function renderLmsSidebar() {
+  const course = coursesData[currentLmsCourseId];
+  const accordion = document.getElementById('lmsAccordion');
+  if (!accordion) return;
+
+  accordion.innerHTML = course.modules.map((mod, modIdx) => {
+    const isOpen = lmsOpenModules.has(mod.id);
+    const modDone = mod.lessons.filter(l => lmsCompletedLessons.has(l.id)).length;
+    return `
+      <div class="lms-module ${isOpen ? 'open' : ''}" data-module="${mod.id}">
+        <button class="lms-module-header" onclick="toggleLmsModule('${mod.id}')">
+          <div class="lms-module-title-wrap">
+            <span class="lms-module-num">Module ${modIdx + 1}</span>
+            <span class="lms-module-title">${mod.title}</span>
+          </div>
+          <div class="lms-module-meta">
+            <span class="lms-module-count">${modDone}/${mod.lessons.length}</span>
+            <span class="lms-chevron">▾</span>
+          </div>
+        </button>
+        <div class="lms-module-body">
+          <ul class="lms-lesson-list">
+            ${mod.lessons.map((les, i) => {
+              const isActive = les.id === currentLmsLessonId;
+              const isDone = lmsCompletedLessons.has(les.id);
+              return `
+                <li class="lms-lesson ${isActive ? 'active' : ''} ${isDone ? 'completed' : ''}">
+                  <button class="lms-lesson-btn" onclick="selectLmsLesson('${les.id}')">
+                    <span class="lms-lesson-status">${isDone ? '✓' : (i + 1)}</span>
+                    <span class="lms-lesson-info">
+                      <span class="lms-lesson-title">${les.title}</span>
+                      <span class="lms-lesson-duration">${les.duration}</span>
+                    </span>
+                  </button>
+                </li>
+              `;
+            }).join('')}
+          </ul>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderLmsPlayer() {
+  const course = coursesData[currentLmsCourseId];
+  const ctx = findLessonContext(course, currentLmsLessonId);
+  if (!ctx) return;
+  const { lesson } = ctx;
+
+  // Find lesson position
+  let pos = 0, total = 0;
+  course.modules.forEach(m => {
+    m.lessons.forEach(l => {
+      total++;
+      if (l.id === lesson.id) pos = total;
+    });
+  });
+
+  const isDone = lmsCompletedLessons.has(lesson.id);
+
+  const playerEl = document.getElementById('lmsPlayer');
+  playerEl.innerHTML = `
+    <div class="lms-video-frame">
+      <div class="lms-video-placeholder" data-video-slot="${lesson.id}">
+        <div class="lms-video-play-btn">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <span class="lms-video-label">Video Placeholder</span>
+        <small class="lms-video-hint">Backend will inject the video source for "${lesson.title}" here</small>
+      </div>
+      <div class="lms-video-meta">
+        <span class="lms-video-lesson-num">Lesson ${pos} of ${total}</span>
+        <span class="lms-video-duration">${lesson.duration}</span>
+      </div>
+    </div>
+    <div class="lms-player-actions">
+      <button class="btn btn-secondary ${isDone ? 'is-done' : ''}" onclick="markCurrentLessonComplete()">
+        ${isDone ? '✓ Marked Complete' : 'Mark as Complete'}
+      </button>
+      <button class="btn btn-primary" onclick="nextLesson()">
+        Next Lesson
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  `;
+
+  document.getElementById('lmsCurrentTitle').textContent = lesson.title;
+  document.getElementById('lmsCurrentDesc').textContent = lesson.description || '';
+
+  // Update tabs active
+  document.querySelectorAll('#lmsTabs .lms-tab').forEach(t => {
+    t.classList.toggle('active', t.getAttribute('data-lms-tab') === currentLmsTab);
+  });
+}
+
+function renderLmsTab() {
+  const course = coursesData[currentLmsCourseId];
+  const ctx = findLessonContext(course, currentLmsLessonId);
+  const panel = document.getElementById('lmsTabPanel');
+  if (!ctx || !panel) return;
+  const { module } = ctx;
+
+  if (currentLmsTab === 'overview') {
+    panel.innerHTML = `
+      <div class="lms-overview">
+        <h4>About this module</h4>
+        <p>${module.title} — ${module.lessons.length} lessons covering practical skills you can apply right away.</p>
+        <h4>What you'll learn</h4>
+        <ul>
+          ${module.lessons.map(l => `<li>${l.title}</li>`).join('')}
+        </ul>
+        <p class="lms-overview-note">All lessons include video placeholders ready for backend integration.</p>
+      </div>
+    `;
+  } else if (currentLmsTab === 'resources') {
+    panel.innerHTML = `
+      <div class="lms-resources">
+        <h4>Downloadable Resources</h4>
+        <p class="lms-section-desc">Materials for the module "${module.title}".</p>
+        <div class="lms-resource-list">
+          ${module.resources.map(r => `
+            <div class="lms-resource-item">
+              <div class="lms-resource-icon">${r.type}</div>
+              <div class="lms-resource-info">
+                <span class="lms-resource-name">${r.name}</span>
+                <span class="lms-resource-size">${r.size}</span>
+              </div>
+              <button class="btn btn-secondary lms-dl-btn" onclick="alert('Backend will deliver this file.')">Download</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } else {
+    panel.innerHTML = `
+      <div class="lms-assessment">
+        <h4>${module.quiz.title}</h4>
+        <p class="lms-section-desc">Test your understanding of "${module.title}".</p>
+        ${module.quiz.questions.map((q, qi) => `
+          <div class="lms-quiz-question" data-qi="${qi}">
+            <div class="lms-quiz-q">${qi + 1}. ${q.q}</div>
+            <div class="lms-quiz-options">
+              ${q.options.map((opt, oi) => `
+                <button class="lms-quiz-option" data-opt-index="${oi}" onclick="checkQuizAnswer(this, ${oi === q.answer}, ${q.answer})">${opt}</button>
+              `).join('')}
+            </div>
+            <div class="lms-quiz-feedback"></div>
+          </div>
+        `).join('')}
       </div>
     `;
   }
 }
 
+function switchLmsTab(tab) {
+  currentLmsTab = tab;
+  document.querySelectorAll('#lmsTabs .lms-tab').forEach(t => {
+    t.classList.toggle('active', t.getAttribute('data-lms-tab') === tab);
+  });
+  renderLmsTab();
+}
+
+function checkQuizAnswer(btn, isCorrect, correctIndex) {
+  const parent = btn.closest('.lms-quiz-question');
+  if (!parent) return;
+  const options = parent.querySelectorAll('.lms-quiz-option');
+  options.forEach(b => {
+    b.disabled = true;
+    const idx = parseInt(b.dataset.optIndex, 10);
+    if (idx === correctIndex) b.classList.add('correct');
+  });
+  if (!isCorrect) btn.classList.add('incorrect');
+  const fb = parent.querySelector('.lms-quiz-feedback');
+  fb.textContent = isCorrect ? '✓ Correct!' : '✗ Not quite — correct answer highlighted above.';
+  fb.className = 'lms-quiz-feedback ' + (isCorrect ? 'ok' : 'bad');
+}
+
+function toggleLmsModule(moduleId) {
+  if (lmsOpenModules.has(moduleId)) lmsOpenModules.delete(moduleId);
+  else lmsOpenModules.add(moduleId);
+  renderLmsSidebar();
+}
+
+function selectLmsLesson(lessonId) {
+  currentLmsLessonId = lessonId;
+  currentLmsTab = "overview";
+  // Auto-expand the module that contains this lesson
+  const course = coursesData[currentLmsCourseId];
+  for (const mod of course.modules) {
+    if (mod.lessons.some(l => l.id === lessonId)) {
+      lmsOpenModules.add(mod.id);
+      break;
+    }
+  }
+  renderLms();
+}
+
+function markCurrentLessonComplete() {
+  if (!currentLmsLessonId) return;
+  if (lmsCompletedLessons.has(currentLmsLessonId)) {
+    lmsCompletedLessons.delete(currentLmsLessonId);
+  } else {
+    lmsCompletedLessons.add(currentLmsLessonId);
+  }
+  saveCompletedLessons(currentLmsCourseId, lmsCompletedLessons);
+  renderLms();
+}
+
+function nextLesson() {
+  const course = coursesData[currentLmsCourseId];
+  const flat = [];
+  course.modules.forEach(m => m.lessons.forEach(l => flat.push(l)));
+  const idx = flat.findIndex(l => l.id === currentLmsLessonId);
+  if (idx >= 0 && idx < flat.length - 1) {
+    selectLmsLesson(flat[idx + 1].id);
+  } else {
+    alert('🎉 You have reached the end of this course!');
+  }
+}
 
 /* ========== CONTACT FORM CONTROLLER ========== */
 function handleContact(e) {
@@ -291,7 +620,7 @@ function setupAssistant() {
   launcher.addEventListener('click', () => {
     panel.classList.toggle('active');
     if (panel.classList.contains('active') && messages.children.length === 0) {
-      addAssistantMessage('bot', "Hello! Welcome to HackPack. I can help you find learning resources, explore tool courses, or select a vertical career roadmap. What would you like to explore today?");
+      addAssistantMessage('bot', "Hello! Welcome to cyberM. I can help you find learning resources, explore tool courses, or select a vertical career roadmap. What would you like to explore today?");
     }
   });
 
@@ -314,7 +643,7 @@ function setupAssistant() {
         if (action === 'career') {
           addAssistantMessage('user', 'Start my cybersecurity journey');
           setTimeout(() => {
-            addAssistantMessage('bot', 'Awesome! To start your journey, switch to our Main Cybersecurity Basics Vertical Roadmap. It covers OS fundamentals, networking, core security principles, and hands-on lab setup step-by-step.');
+            addAssistantMessage('bot', 'Awesome! To start your journey, switch to our Foundation Cybersecurity Basics roadmap. It covers OS fundamentals, networking, core security principles, and hands-on lab setup step-by-step.');
             navigateTo('roadmap');
             switchRoadmap('basics');
           }, 500);
@@ -376,32 +705,28 @@ function respondToUser(query) {
   }
 }
 
-/* ========== THEME TOGGLE CONTROLLER ========== */
+/* ========== THEME TOGGLE ========== */
 function updateBrandLogo(theme) {
   const logo = document.getElementById('brandLogo');
   if (!logo) return;
-  if (theme === 'dark') {
-    logo.src = 'assets/logo-dark-theme.png';
-  } else {
-    logo.src = 'assets/logo-light-theme.png';
-  }
+  logo.src = theme === 'dark' ? 'assets/logo-dark-theme.png' : 'assets/logo-light-theme.png';
 }
 
 function setupThemeToggle() {
   const btn = document.getElementById('themeToggle');
   if (!btn) return;
-  const savedTheme = localStorage.getItem('hackpack_theme') || 'dark';
+  const savedTheme = localStorage.getItem('cyberM_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
   updateBrandLogo(savedTheme);
 
   btn.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('hackpack_theme', newTheme);
-    updateThemeIcon(newTheme);
-    updateBrandLogo(newTheme);
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('cyberM_theme', next);
+    updateThemeIcon(next);
+    updateBrandLogo(next);
   });
 }
 
@@ -415,7 +740,7 @@ function updateThemeIcon(theme) {
   }
 }
 
-/* ========== MOBILE NAVIGATION TOGGLE ========== */
+/* ========== MOBILE NAVIGATION ========== */
 function setupMobileNav() {
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
@@ -431,20 +756,26 @@ document.addEventListener('DOMContentLoaded', () => {
   setupThemeToggle();
   setupMobileNav();
 
-  // Initialize Vertical Roadmap
+  // Roadmap init
+  currentRoadmapTeam = "red";
+  updateRoadmapTeamTabsUI();
+  renderRoadmapNav();
   switchRoadmap('basics');
 
-  // Initialize Resources
+  // Resources
   renderResources();
   const searchInput = document.getElementById('searchInput');
-  const resourceLevelFilter = document.getElementById('resourceLevelFilter');
+  const levelFilter = document.getElementById('resourceLevelFilter');
   if (searchInput) searchInput.addEventListener('input', renderResources);
-  if (resourceLevelFilter) resourceLevelFilter.addEventListener('change', renderResources);
+  if (levelFilter) levelFilter.addEventListener('change', renderResources);
 
-  // Initialize Courses
+  // Courses init
+  currentCourseTeam = "red";
+  updateCourseTeamTabsUI();
+  currentCourseToolId = "nmap";
   renderCourseToolNav();
   renderCourseContent();
 
-  // Initialize Assistant
+  // Assistant
   setupAssistant();
 });
