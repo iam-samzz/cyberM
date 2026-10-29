@@ -1,3 +1,5 @@
+//project2
+
 /* ========== RESOURCES DATA (46 ITEMS) ========== */
 const resources = [
   { type:"article", category:"web-security", level:"beginner", title:"OWASP Top 10", desc:"Understand the most important web application security risks and how developers can reduce them.", source:"OWASP", link:"https://owasp.org/Top10/", date:"Official guide", skill:"Web Security" },

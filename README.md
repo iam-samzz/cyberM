@@ -17,13 +17,28 @@ This is the Version 2 frontend codebase, designed to be lightweight and easily i
 ## Project Structure
 
 ```text
-hackpack/
-├── assets/
-│   ├── logo-dark-theme.png
-│   └── logo-light-theme.png
+cyberm/
+├── index.html                  (Landing page — was project1/index.html)
+├── login.html                  (Login page — was project1/login.html)
+├── signup.html                 (Signup page — was project1/signup.html)
+├── dashboard.html              (Learning platform — was project2/index.html)
+│
 ├── css/
-│   └── style.css
+│   ├── landing.css             (was project1/style.css)
+│   └── dashboard.css           (was project2/css/style.css)
+│
 ├── js/
-│   ├── data.js
-│   └── script.js
-└── index.html
+│   ├── users.js                (NEW — dummy user data store)
+│   ├── auth.js                 (NEW — dummy authentication system)
+│   ├── landing.js              (was project1/script.js — updated)
+│   ├── motion.js               (was project1/motion.js — unchanged)
+│   ├── login.js                (was project1/login.js — updated)
+│   ├── signup.js               (was project1/signup.js — updated)
+│   ├── data.js                 (was project2/js/data.js — unchanged)
+│   └── dashboard.js            (was project2/js/script.js — updated)
+│
+└── assets/
+    ├── cyberm-logo-light.png
+    ├── cyberm-logo-dark.png
+    ├── logo-light-theme.png
+    └── logo-dark-theme.png

@@ -1,3 +1,5 @@
+// project2 — dashboard logic (merged project: dummy auth + subscription gating)
+
 /* ========== STATE MANAGEMENT ========== */
 let currentRoadmapId = "basics";
 let currentRoadmapTeam = "red";
@@ -12,7 +14,7 @@ let lmsCompletedLessons = new Set();
 let lmsOpenModules = new Set();
 let currentLmsTab = "overview";
 
-/* ========== NAVIGATION CONTROLLER ========== */
+/* ========== NAVIGATION ========== */
 function navigateTo(pageId) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   const targetPage = document.getElementById('page-' + pageId);
@@ -27,7 +29,19 @@ function navigateTo(pageId) {
   if (navLinks) navLinks.classList.remove('open');
   if (hamburger) hamburger.classList.remove('active');
 
+  if (pageId === 'profile') renderProfile();
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ========== AUTH HELPERS ========== */
+function setupLogout() {
+  const btn = document.getElementById('navLogout');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    if (window.CyberAuth) window.CyberAuth.logout();
+    window.location.href = 'index.html';
+  });
 }
 
 /* ========== TEAM TABS — ROADMAPS ========== */
@@ -64,7 +78,6 @@ function switchRoadmap(roadmapId) {
   if (!roadmapsData[roadmapId]) return;
   const data = roadmapsData[roadmapId];
 
-  // If roadmap belongs to a specific team and it differs, switch team tab
   if (data.team !== 'foundation' && data.team !== currentRoadmapTeam) {
     currentRoadmapTeam = data.team;
     updateRoadmapTeamTabsUI();
@@ -154,7 +167,7 @@ function setCourseTeam(team, btn) {
   renderCourseContent();
 }
 
-/* ========== RESOURCES RENDERER & FILTERS ========== */
+/* ========== RESOURCES ========== */
 function renderResources() {
   const grid = document.getElementById('resourceGrid');
   if (!grid) return;
@@ -214,7 +227,7 @@ function filterResourceCategory(cat, btn) {
   renderResources();
 }
 
-/* ========== COURSES PAGE — LANDING VIEW ========== */
+/* ========== COURSES — LANDING ========== */
 function renderCourseToolNav() {
   const nav = document.getElementById('courseToolNav');
   if (!nav) return;
@@ -250,6 +263,7 @@ function renderCourseContent() {
     return;
   }
   const totalLessons = course.modules.reduce((s, m) => s + m.lessons.length, 0);
+  const subscribed = window.CyberAuth && window.CyberAuth.isSubscribedTo(course.id);
 
   container.innerHTML = `
     <div class="course-header-card">
@@ -269,11 +283,12 @@ function renderCourseContent() {
             <span><strong>${course.totalDuration}</strong> Total</span>
             <span><strong>${course.instructor}</strong> Instructor</span>
           </div>
+          ${subscribed ? '' : `<div class="course-subscription-note">🔒 Subscription required — enroll to unlock the interactive learning page.</div>`}
         </div>
       </div>
       <div class="course-header-actions">
-        <button class="btn btn-primary" onclick="enrollCourse('${course.id}')">
-          Enroll Now
+        <button class="btn btn-primary" onclick="requestEnrollment('${course.id}', '${course.name.replace(/'/g, "\\'")}')">
+          ${subscribed ? 'Continue Learning' : 'Enroll Now'}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
       </div>
@@ -303,18 +318,45 @@ function renderCourseContent() {
   `;
 }
 
-/* ========== LMS PLAYER ========== */
-function lmsStorageKey(courseId) { return `cyberM_lms_progress_${courseId}`; }
+/* ========== SUBSCRIPTION GATE ========== */
+function requestEnrollment(courseId, courseName) {
+  if (!window.CyberAuth || !window.CyberAuth.isLoggedIn()) {
+    window.location.href = 'login.html?next=dashboard.html';
+    return;
+  }
+  if (window.CyberAuth.isSubscribedTo(courseId)) {
+    enrollCourse(courseId);
+    return;
+  }
 
+  // Not subscribed → route to contact page for subscription.
+  navigateTo('contact');
+  const subject = document.getElementById('cSubject');
+  if (subject) subject.value = 'tool-training';
+  const msg = document.getElementById('cMessage');
+  if (msg) msg.value = `Hi CyberM team, I'd like to subscribe to the "${courseName}" tool course. Please share subscription details.`;
+  const user = window.CyberAuth.getCurrentUser();
+  if (user) {
+    const nameField = document.getElementById('cName');
+    const emailField = document.getElementById('cEmail');
+    if (nameField) nameField.value = user.fullName || '';
+    if (emailField) emailField.value = user.email || '';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ========== LMS ========== */
 function getCompletedLessons(courseId) {
-  try {
-    const stored = localStorage.getItem(lmsStorageKey(courseId));
-    return stored ? new Set(JSON.parse(stored)) : new Set();
-  } catch { return new Set(); }
+  if (window.CyberAuth && window.CyberAuth.isLoggedIn()) {
+    return window.CyberAuth.getProgress(courseId);
+  }
+  return new Set();
 }
 
 function saveCompletedLessons(courseId, set) {
-  try { localStorage.setItem(lmsStorageKey(courseId), JSON.stringify([...set])); } catch {}
+  if (window.CyberAuth && window.CyberAuth.isLoggedIn()) {
+    window.CyberAuth.saveProgress(courseId, set);
+  }
 }
 
 function getCourseTotalLessons(course) {
@@ -331,14 +373,21 @@ function findLessonContext(course, lessonId) {
 
 function enrollCourse(courseId) {
   if (!coursesData[courseId]) return;
+  if (!window.CyberAuth.isSubscribedTo(courseId)) {
+    requestEnrollment(courseId, coursesData[courseId].name);
+    return;
+  }
+
   currentLmsCourseId = courseId;
-  currentLmsTab = "overview";
+  currentLmsTab = 'overview';
   lmsCompletedLessons = getCompletedLessons(courseId);
+
   const course = coursesData[courseId];
   lmsOpenModules = new Set([course.modules[0].id]);
   currentLmsLessonId = course.modules[0].lessons[0].id;
 
   document.getElementById('courseLandingView').style.display = 'none';
+  document.getElementById('courseTeamTabs').style.display = 'none'; // change3: hide Red/Blue tabs inside LMS
   document.getElementById('lmsView').style.display = 'block';
 
   renderLms();
@@ -349,6 +398,7 @@ function exitLms() {
   if (currentLmsCourseId) saveCompletedLessons(currentLmsCourseId, lmsCompletedLessons);
   document.getElementById('lmsView').style.display = 'none';
   document.getElementById('courseLandingView').style.display = 'block';
+  document.getElementById('courseTeamTabs').style.display = '';
   renderCourseContent();
 }
 
@@ -356,25 +406,24 @@ function renderLms() {
   const course = coursesData[currentLmsCourseId];
   if (!course) return;
 
-  // Topbar
+  if (!window.CyberAuth.isSubscribedTo(course.id)) {
+    exitLms();
+    return;
+  }
+
   document.getElementById('lmsTopbarTitle').textContent = course.name;
 
-  // Progress
   const total = getCourseTotalLessons(course);
   const done = course.modules.reduce((s, m) => s + m.lessons.filter(l => lmsCompletedLessons.has(l.id)).length, 0);
   const pct = total ? Math.round((done / total) * 100) : 0;
   document.getElementById('lmsProgressFill').style.width = pct + '%';
   document.getElementById('lmsProgressText').textContent = pct + '%';
 
-  // Sidebar title & meta
   document.getElementById('lmsSidebarTitle').textContent = course.name;
   document.getElementById('lmsSidebarMeta').textContent = `${course.modules.length} modules · ${total} lessons · ${course.totalDuration}`;
 
-  // Player
   renderLmsPlayer();
-  // Sidebar accordion
   renderLmsSidebar();
-  // Tabs
   renderLmsTab();
 }
 
@@ -428,7 +477,6 @@ function renderLmsPlayer() {
   if (!ctx) return;
   const { lesson } = ctx;
 
-  // Find lesson position
   let pos = 0, total = 0;
   course.modules.forEach(m => {
     m.lessons.forEach(l => {
@@ -468,7 +516,6 @@ function renderLmsPlayer() {
   document.getElementById('lmsCurrentTitle').textContent = lesson.title;
   document.getElementById('lmsCurrentDesc').textContent = lesson.description || '';
 
-  // Update tabs active
   document.querySelectorAll('#lmsTabs .lms-tab').forEach(t => {
     t.classList.toggle('active', t.getAttribute('data-lms-tab') === currentLmsTab);
   });
@@ -564,8 +611,7 @@ function toggleLmsModule(moduleId) {
 
 function selectLmsLesson(lessonId) {
   currentLmsLessonId = lessonId;
-  currentLmsTab = "overview";
-  // Auto-expand the module that contains this lesson
+  currentLmsTab = 'overview';
   const course = coursesData[currentLmsCourseId];
   for (const mod of course.modules) {
     if (mod.lessons.some(l => l.id === lessonId)) {
@@ -599,14 +645,93 @@ function nextLesson() {
   }
 }
 
-/* ========== CONTACT FORM CONTROLLER ========== */
+/* ========== CONTACT ========== */
 function handleContact(e) {
   e.preventDefault();
   alert('Thank you for reaching out! Your message has been sent successfully. We will get back to you within 24 hours.');
   document.getElementById('contactForm').reset();
 }
 
-/* ========== ASSISTANT BOT CONTROLLER ========== */
+/* ========== PROFILE PAGE ========== */
+function renderProfile() {
+  const root = document.getElementById('profileRoot');
+  if (!root) return;
+
+  const user = window.CyberAuth ? window.CyberAuth.getCurrentUser() : null;
+  if (!user) {
+    root.innerHTML = `<p class="no-results">You are not signed in. <a href="login.html">Sign in</a> to view your profile.</p>`;
+    return;
+  }
+
+  const sub = user.subscription || {};
+  const progress = user.progress || {};
+  const subscribedCourses = (sub.courses || []).map(id => coursesData[id]).filter(Boolean);
+
+  const courseProgressHTML = subscribedCourses.map(c => {
+    const done = (progress[c.id] || []).length;
+    const total = getCourseTotalLessons(c);
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    return `
+      <div class="profile-course-row">
+        <div class="profile-course-head">
+          <span class="profile-course-name">${c.name}</span>
+          <span class="profile-course-meta">${done}/${total} lessons · ${pct}%</span>
+        </div>
+        <div class="profile-progress-bar"><div class="profile-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('') || `<p class="profile-empty">No subscribed courses yet. Browse the course catalog to enroll.</p>`;
+
+  const otherProgress = Object.keys(coursesData).map(id => {
+    const c = coursesData[id];
+    const done = (progress[id] || []).length;
+    if (!done) return '';
+    const total = getCourseTotalLessons(c);
+    return `<div class="profile-row"><span>${c.name}</span><span>${done}/${total} lessons</span></div>`;
+  }).filter(Boolean).join('');
+
+  root.innerHTML = `
+    <div class="profile-grid">
+      <div class="profile-card">
+        <div class="profile-identity">
+          <div class="profile-avatar">${user.avatarInitials || 'CM'}</div>
+          <div>
+            <h3 style="margin:0;font-size:1.2rem;color:var(--text-primary)">${user.fullName}</h3>
+            <p style="margin:2px 0 0;font-size:.82rem;color:var(--text-muted)">${user.role || 'Member'}</p>
+          </div>
+        </div>
+        <div class="profile-rows">
+          <div class="profile-row"><span>Email</span><span>${user.email}</span></div>
+          <div class="profile-row"><span>Account ID</span><span>${user.id}</span></div>
+          <div class="profile-row"><span>Status</span><span>${user.status || 'active'}</span></div>
+          <div class="profile-row"><span>Member since</span><span>${user.joinedAt || '—'}</span></div>
+          <div class="profile-row"><span>Country</span><span>${user.country || '—'}</span></div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <h3 style="margin:0 0 14px;font-size:1rem;color:var(--text-primary)">Subscription</h3>
+        <div class="profile-rows">
+          <div class="profile-row"><span>Plan</span><span>${sub.plan || 'Free tier'}</span></div>
+          <div class="profile-row"><span>Status</span><span class="profile-badge ${sub.active ? 'active' : 'inactive'}">${sub.status || (sub.active ? 'Active' : 'Inactive')}</span></div>
+          <div class="profile-row"><span>Started</span><span>${sub.startedAt || '—'}</span></div>
+          <div class="profile-row"><span>Renews</span><span>${sub.renewsAt || '—'}</span></div>
+        </div>
+      </div>
+
+      <div class="profile-card" style="grid-column: 1 / -1;">
+        <h3 style="margin:0 0 14px;font-size:1rem;color:var(--text-primary)">Subscribed Courses & Progress</h3>
+        <div class="profile-progress-list">${courseProgressHTML}</div>
+        ${otherProgress ? `
+          <h4 style="margin:22px 0 10px;font-size:.9rem;color:var(--text-primary)">All learning activity</h4>
+          <div class="profile-rows">${otherProgress}</div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+/* ========== ASSISTANT BOT ========== */
 function setupAssistant() {
   const launcher = document.getElementById('assistantLauncher');
   const panel = document.getElementById('assistantPanel');
@@ -705,7 +830,7 @@ function respondToUser(query) {
   }
 }
 
-/* ========== THEME TOGGLE ========== */
+/* ========== THEME ========== */
 function updateBrandLogo(theme) {
   const logo = document.getElementById('brandLogo');
   if (!logo) return;
@@ -740,7 +865,7 @@ function updateThemeIcon(theme) {
   }
 }
 
-/* ========== MOBILE NAVIGATION ========== */
+/* ========== MOBILE NAV ========== */
 function setupMobileNav() {
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
@@ -751,31 +876,34 @@ function setupMobileNav() {
   });
 }
 
-/* ========== INITIALIZATION ========== */
+/* ========== INIT ========== */
 document.addEventListener('DOMContentLoaded', () => {
+  if (!window.CyberAuth || !window.CyberAuth.isLoggedIn()) {
+    window.location.replace('login.html?next=dashboard.html');
+    return;
+  }
+
+  setupLogout();
   setupThemeToggle();
   setupMobileNav();
 
-  // Roadmap init
-  currentRoadmapTeam = "red";
+  currentRoadmapTeam = 'red';
   updateRoadmapTeamTabsUI();
   renderRoadmapNav();
   switchRoadmap('basics');
 
-  // Resources
   renderResources();
   const searchInput = document.getElementById('searchInput');
   const levelFilter = document.getElementById('resourceLevelFilter');
   if (searchInput) searchInput.addEventListener('input', renderResources);
   if (levelFilter) levelFilter.addEventListener('change', renderResources);
 
-  // Courses init
-  currentCourseTeam = "red";
+  currentCourseTeam = 'red';
   updateCourseTeamTabsUI();
-  currentCourseToolId = "nmap";
+  currentCourseToolId = 'nmap';
   renderCourseToolNav();
   renderCourseContent();
 
-  // Assistant
   setupAssistant();
+  renderProfile();
 });
