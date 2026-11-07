@@ -86,7 +86,11 @@
     isSubscribedTo(courseId) {
       const user = this.getCurrentUser();
       if (!user || !user.subscription) return false;
-      return !!user.subscription.active && (user.subscription.courses || []).includes(courseId);
+      if (!user.subscription.active) return false;
+      const courses = user.subscription.courses || [];
+      if (courses.includes("*") || courses.includes(courseId)) return true;
+      if (user.subscription.plan && user.subscription.plan.toLowerCase().includes("pro")) return true;
+      return false;
     },
 
     getProgress(courseId) {

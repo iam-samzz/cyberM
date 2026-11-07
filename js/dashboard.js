@@ -4,7 +4,7 @@
 let currentRoadmapId = "basics";
 let currentRoadmapTeam = "red";
 let selectedResourceCategory = "all";
-let currentCourseToolId = "nmap";
+let currentCourseToolId = "burp";
 let currentCourseTeam = "red";
 
 /* LMS state */
@@ -279,7 +279,7 @@ function renderCourseContent() {
           <p class="course-header-desc">${course.description}</p>
           <div class="course-header-stats">
             <span><strong>${course.modules.length}</strong> Modules</span>
-            <span><strong>${totalLessons}</strong> Lessons</span>
+            <span><strong>${totalLessons}</strong> Classes</span>
             <span><strong>${course.totalDuration}</strong> Total</span>
             <span><strong>${course.instructor}</strong> Instructor</span>
           </div>
@@ -295,20 +295,49 @@ function renderCourseContent() {
     </div>
 
     <div class="course-preview-modules">
-      <h4 class="course-preview-heading">Course Curriculum</h4>
+      <div class="course-curriculum-header">
+        <div>
+          <h4 class="course-preview-heading">Official Course Curriculum</h4>
+          <p class="course-preview-subheading">${totalLessons} class-wise video topics, learning coverage notes, and practical worksheets.</p>
+        </div>
+        <div class="course-curriculum-meta-tag">
+          <span class="pulse-indicator"></span>
+          Curriculum Specification
+        </div>
+      </div>
       ${course.modules.map((mod, i) => `
         <div class="course-preview-module">
           <div class="course-preview-module-header">
-            <span class="course-preview-module-num">Module ${i + 1}</span>
-            <span class="course-preview-module-title">${mod.title}</span>
-            <span class="course-preview-module-meta">${mod.lessons.length} lessons</span>
+            <div class="course-preview-mod-title-group">
+              <span class="course-preview-module-num">Module ${i + 1}</span>
+              <h5 class="course-preview-module-title">${mod.title}</h5>
+            </div>
+            <span class="course-preview-module-meta">${mod.lessons.length} classes</span>
           </div>
           <ul class="course-preview-lesson-list">
             ${mod.lessons.map(l => `
-              <li>
-                <span class="course-preview-lesson-icon">▶</span>
-                <span class="course-preview-lesson-title">${l.title}</span>
-                <span class="course-preview-lesson-duration">${l.duration}</span>
+              <li class="course-preview-lesson-item">
+                <div class="course-preview-lesson-top">
+                  <div class="course-preview-lesson-identity">
+                    <span class="course-class-tag">${l.classNum || 'Class'}</span>
+                    <span class="course-preview-lesson-title">${l.title}</span>
+                  </div>
+                  <div class="course-preview-lesson-badges">
+                    <span class="badge-status-video">Video (Awaiting Upload)</span>
+                    <span class="badge-status-worksheet">Worksheet Available</span>
+                    <span class="course-preview-lesson-duration">${l.duration}</span>
+                  </div>
+                </div>
+                <div class="course-preview-lesson-detail">
+                  <div class="course-preview-detail-row">
+                    <span class="detail-label">Learning Coverage:</span>
+                    <span class="detail-value">${l.coverage}</span>
+                  </div>
+                  <div class="course-preview-detail-row">
+                    <span class="detail-label">Worksheet / Assignment:</span>
+                    <span class="detail-value highlight">${l.worksheet}</span>
+                  </div>
+                </div>
               </li>
             `).join('')}
           </ul>
@@ -455,9 +484,9 @@ function renderLmsSidebar() {
               return `
                 <li class="lms-lesson ${isActive ? 'active' : ''} ${isDone ? 'completed' : ''}">
                   <button class="lms-lesson-btn" onclick="selectLmsLesson('${les.id}')">
-                    <span class="lms-lesson-status">${isDone ? '✓' : (i + 1)}</span>
+                    <span class="lms-lesson-status">${isDone ? '✓' : (les.classNum ? les.classNum.replace('Class ', '') : (i + 1))}</span>
                     <span class="lms-lesson-info">
-                      <span class="lms-lesson-title">${les.title}</span>
+                      <span class="lms-lesson-title"><strong class="lms-lesson-cls-num">${les.classNum || ''}:</strong> ${les.title}</span>
                       <span class="lms-lesson-duration">${les.duration}</span>
                     </span>
                   </button>
@@ -487,25 +516,48 @@ function renderLmsPlayer() {
 
   const isDone = lmsCompletedLessons.has(lesson.id);
 
-  const playerEl = document.getElementById('lmsPlayer');
-  playerEl.innerHTML = `
-    <div class="lms-video-frame">
+  // Video element markup when videoUrl is present vs Coming Soon placeholder when videoUrl is null
+  const videoContentHTML = lesson.videoUrl
+    ? `
+      <video
+        id="lmsVideoElement"
+        class="lms-video-element"
+        controls
+        playsinline
+        preload="metadata"
+        src="${lesson.videoUrl}"
+        data-lesson-id="${lesson.id}"
+      >
+        Your browser does not support the HTML5 video tag.
+      </video>
+    `
+    : `
       <div class="lms-video-placeholder" data-video-slot="${lesson.id}">
         <div class="lms-video-play-btn">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
-        <span class="lms-video-label">Video Placeholder</span>
-        <small class="lms-video-hint">Backend will inject the video source for "${lesson.title}" here</small>
+        <span class="lms-video-label">${lesson.classNum ? lesson.classNum + ': ' : ''}${lesson.title}</span>
+        <div class="lms-video-status-pill">
+          <span class="pulse-indicator-yellow"></span>
+          Video Recording Pending Upload · Coming Soon
+        </div>
+        <small class="lms-video-hint">Official video production is underway. Once recorded and verified, the player stream will be connected here.</small>
       </div>
+    `;
+
+  const playerEl = document.getElementById('lmsPlayer');
+  playerEl.innerHTML = `
+    <div class="lms-video-frame">
+      ${videoContentHTML}
       <div class="lms-video-meta">
-        <span class="lms-video-lesson-num">Lesson ${pos} of ${total}</span>
-        <span class="lms-video-duration">${lesson.duration}</span>
+        <span class="lms-video-lesson-num">${lesson.classNum || ('Class ' + pos)} · Class ${pos} of ${total}</span>
+        <span class="lms-video-duration">Est. ${lesson.duration}</span>
       </div>
     </div>
     <div class="lms-player-actions">
-      <button class="btn btn-secondary ${isDone ? 'is-done' : ''}" onclick="markCurrentLessonComplete()">
-        ${isDone ? '✓ Marked Complete' : 'Mark as Complete'}
-      </button>
+      <div class="lms-lesson-status-display ${isDone ? 'is-completed' : 'is-pending'}" id="lmsLessonStatusBadge">
+        ${isDone ? '<span class="status-icon">✓</span> Lesson Completed' : '<span class="status-icon">○</span> Video Completion Required'}
+      </div>
       <button class="btn btn-primary" onclick="nextLesson()">
         Next Lesson
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -513,8 +565,18 @@ function renderLmsPlayer() {
     </div>
   `;
 
-  document.getElementById('lmsCurrentTitle').textContent = lesson.title;
-  document.getElementById('lmsCurrentDesc').textContent = lesson.description || '';
+  // Attach HTML5 video 'ended' event listener when an actual video is loaded
+  if (lesson.videoUrl) {
+    const videoEl = document.getElementById('lmsVideoElement');
+    if (videoEl) {
+      videoEl.addEventListener('ended', function () {
+        handleLessonVideoEnded(currentLmsCourseId, lesson.id);
+      });
+    }
+  }
+
+  document.getElementById('lmsCurrentTitle').textContent = `${lesson.classNum ? lesson.classNum + ' — ' : ''}${lesson.title}`;
+  document.getElementById('lmsCurrentDesc').textContent = `Coverage: ${lesson.coverage}`;
 
   document.querySelectorAll('#lmsTabs .lms-tab').forEach(t => {
     t.classList.toggle('active', t.getAttribute('data-lms-tab') === currentLmsTab);
@@ -526,36 +588,78 @@ function renderLmsTab() {
   const ctx = findLessonContext(course, currentLmsLessonId);
   const panel = document.getElementById('lmsTabPanel');
   if (!ctx || !panel) return;
-  const { module } = ctx;
+  const { module, lesson } = ctx;
 
   if (currentLmsTab === 'overview') {
     panel.innerHTML = `
       <div class="lms-overview">
-        <h4>About this module</h4>
-        <p>${module.title} — ${module.lessons.length} lessons covering practical skills you can apply right away.</p>
-        <h4>What you'll learn</h4>
-        <ul>
-          ${module.lessons.map(l => `<li>${l.title}</li>`).join('')}
-        </ul>
-        <p class="lms-overview-note">All lessons include video placeholders ready for backend integration.</p>
+        <div class="lms-overview-header">
+          <span class="lms-class-badge">${lesson.classNum || 'Class Lesson'}</span>
+          <h4>${lesson.title}</h4>
+        </div>
+        <div class="lms-overview-section">
+          <div class="lms-overview-subtitle">// Learning Coverage</div>
+          <p class="lms-coverage-text">${lesson.coverage}</p>
+        </div>
+        <div class="lms-overview-section">
+          <div class="lms-overview-subtitle">// Module Scope &amp; Context</div>
+          <p><strong>${module.title}</strong> covers ${module.lessons.length} structured class lessons aligned with the CyberM curriculum:</p>
+          <ul class="lms-module-classes-list">
+            ${module.lessons.map(l => `
+              <li class="${l.id === lesson.id ? 'current' : ''}">
+                <span class="mod-cls-tag">${l.classNum}</span>
+                <span class="mod-cls-title">${l.title}</span>
+                ${l.id === lesson.id ? '<span class="mod-cls-active-tag">Current</span>' : ''}
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+        <div class="lms-overview-note">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>All cybersecurity activities must be confined strictly to systems owned by the learner, explicitly authorized assets, or isolated training lab sandboxes.</span>
+        </div>
       </div>
     `;
-  } else if (currentLmsTab === 'resources') {
+  } else if (currentLmsTab === 'worksheet' || currentLmsTab === 'resources') {
     panel.innerHTML = `
-      <div class="lms-resources">
-        <h4>Downloadable Resources</h4>
-        <p class="lms-section-desc">Materials for the module "${module.title}".</p>
-        <div class="lms-resource-list">
-          ${module.resources.map(r => `
-            <div class="lms-resource-item">
-              <div class="lms-resource-icon">${r.type}</div>
-              <div class="lms-resource-info">
-                <span class="lms-resource-name">${r.name}</span>
-                <span class="lms-resource-size">${r.size}</span>
-              </div>
-              <button class="btn btn-secondary lms-dl-btn" onclick="alert('Backend will deliver this file.')">Download</button>
+      <div class="lms-worksheet-panel">
+        <div class="lms-worksheet-header">
+          <span class="lms-class-badge">${lesson.classNum || 'Class'} Assignment</span>
+          <h4>${lesson.classNum}: Worksheet &amp; Practical Assignment</h4>
+          <p class="lms-section-desc">Complete this assignment based on the topic and coverage requirements.</p>
+        </div>
+        
+        <div class="lms-worksheet-brief-card">
+          <div class="worksheet-brief-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Assignment Brief: ${lesson.worksheet}
+          </div>
+          <div class="worksheet-task-desc">
+            <p><strong>Assignment Objective:</strong> ${lesson.worksheet}</p>
+            <p><strong>Learning Coverage Reference:</strong> ${lesson.coverage}</p>
+          </div>
+          <div class="worksheet-instructions">
+            <strong>Execution Steps:</strong>
+            <ol>
+              <li>Log into your authorized training VM or sandbox environment.</li>
+              <li>Perform the required demonstration, exercise, or inspection steps.</li>
+              <li>Document output, sanitized artifacts, and answers in your student lab workbook.</li>
+              <li>Submit your findings or worksheet notes for review.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="lms-material-status-card">
+          <div class="material-status-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="material-status-info">
+            <div class="material-status-top">
+              <span class="material-status-title">Downloadable Worksheet PDF</span>
+              <span class="material-status-badge">Awaiting Upload · Coming Soon</span>
             </div>
-          `).join('')}
+            <p class="material-status-text">Official downloadable PDF versions of this worksheet are pending instructor upload. Use the assignment brief above to complete the practical task in your local lab.</p>
+          </div>
         </div>
       </div>
     `;
@@ -622,15 +726,34 @@ function selectLmsLesson(lessonId) {
   renderLms();
 }
 
-function markCurrentLessonComplete() {
-  if (!currentLmsLessonId) return;
-  if (lmsCompletedLessons.has(currentLmsLessonId)) {
-    lmsCompletedLessons.delete(currentLmsLessonId);
-  } else {
-    lmsCompletedLessons.add(currentLmsLessonId);
+function handleLessonVideoEnded(courseId, lessonId) {
+  if (!courseId || !lessonId) return;
+  if (!lmsCompletedLessons.has(lessonId)) {
+    lmsCompletedLessons.add(lessonId);
+    saveCompletedLessons(courseId, lmsCompletedLessons);
+
+    // 1. Update progress percentage and progress bar
+    const course = coursesData[courseId];
+    if (course) {
+      const total = getCourseTotalLessons(course);
+      const done = course.modules.reduce((s, m) => s + m.lessons.filter(l => lmsCompletedLessons.has(l.id)).length, 0);
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      const progressFill = document.getElementById('lmsProgressFill');
+      const progressText = document.getElementById('lmsProgressText');
+      if (progressFill) progressFill.style.width = pct + '%';
+      if (progressText) progressText.textContent = pct + '%';
+    }
+
+    // 2. Update the completed lesson indicator in the sidebar
+    renderLmsSidebar();
+
+    // 3. Update the read-only completion status badge on the player
+    const statusBadge = document.getElementById('lmsLessonStatusBadge');
+    if (statusBadge) {
+      statusBadge.className = 'lms-lesson-status-display is-completed';
+      statusBadge.innerHTML = '<span class="status-icon">✓</span> Lesson Completed';
+    }
   }
-  saveCompletedLessons(currentLmsCourseId, lmsCompletedLessons);
-  renderLms();
 }
 
 function nextLesson() {
@@ -906,4 +1029,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setupAssistant();
   renderProfile();
+
+  const hash = (window.location.hash || '').replace('#', '').trim();
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetPage = hash || urlParams.get('page');
+  if (targetPage && ['home', 'courses', 'ctf', 'resources', 'roadmap', 'about', 'contact', 'profile'].includes(targetPage)) {
+    navigateTo(targetPage);
+  }
 });

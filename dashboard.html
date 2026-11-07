@@ -36,6 +36,7 @@
       <div class="nav-links" id="navLinks">
         <a class="active" data-page="home" onclick="navigateTo('home')">Home</a>
         <a data-page="courses" onclick="navigateTo('courses')">Courses</a>
+        <a data-page="ctf" onclick="navigateTo('ctf')">CTF</a>
         <a data-page="resources" onclick="navigateTo('resources')">Resources</a>
         <a data-page="roadmap" onclick="navigateTo('roadmap')">Roadmap</a>
         <a data-page="about" onclick="navigateTo('about')">About</a>
@@ -77,6 +78,15 @@
             <div>
               <span class="sidebar-link-title">Tool Courses</span>
               <span class="sidebar-link-desc">Video-based learning</span>
+            </div>
+          </a>
+          <a class="sidebar-link" onclick="navigateTo('ctf')">
+            <div class="sidebar-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            </div>
+            <div>
+              <span class="sidebar-link-title">CTF Arena</span>
+              <span class="sidebar-link-desc">Hands-on practice (Coming Soon)</span>
             </div>
           </a>
           <a class="sidebar-link" onclick="navigateTo('resources')">
@@ -213,7 +223,7 @@
           <div class="home-cta-content">
             <div class="home-cta-badge">// Tool Courses</div>
             <h2>Ready to master the tools?</h2>
-            <p>Access video-based courses for 12 industry-standard security tools. Built for beginners and practitioners alike.</p>
+            <p>Access video-based courses across 44 industry-standard Red Team and Blue Team courses with 313 structured class lessons.</p>
             <div class="home-cta-actions">
               <button class="btn btn-primary" onclick="navigateTo('courses')">
                 Browse Courses
@@ -235,8 +245,8 @@
   <!-- ========== COURSES ========== -->
   <section class="section" id="page-courses">
     <div class="section-label">// Tool Courses</div>
-    <h2 class="section-title">Tool Learning Courses</h2>
-    <p class="section-desc">Master industry-standard cybersecurity tools with video-based courses. Choose your team, select a tool, and start learning.</p>
+    <h2 class="section-title">Red Team &amp; Blue Team Course Catalog</h2>
+    <p class="section-desc">Master offensive and defensive cybersecurity across 44 structured courses with 313 class-wise video topics, detailed learning coverage, and practical worksheets.</p>
     <div class="section-divider"></div>
 
     <div class="team-tabs" id="courseTeamTabs">
@@ -286,9 +296,9 @@
             <p id="lmsCurrentDesc"></p>
           </div>
           <div class="lms-tabs" id="lmsTabs">
-            <button class="lms-tab active" data-lms-tab="overview" onclick="switchLmsTab('overview')">Overview</button>
-            <button class="lms-tab" data-lms-tab="resources" onclick="switchLmsTab('resources')">Resources</button>
-            <button class="lms-tab" data-lms-tab="assessment" onclick="switchLmsTab('assessment')">Assessment</button>
+            <button class="lms-tab active" data-lms-tab="overview" onclick="switchLmsTab('overview')">Overview &amp; Coverage</button>
+            <button class="lms-tab" data-lms-tab="worksheet" onclick="switchLmsTab('worksheet')">Worksheet &amp; Assignment</button>
+            <button class="lms-tab" data-lms-tab="assessment" onclick="switchLmsTab('assessment')">Assessment Quiz</button>
           </div>
           <div class="lms-tab-panel" id="lmsTabPanel"></div>
         </div>
@@ -299,6 +309,349 @@
           </div>
           <div class="lms-accordion" id="lmsAccordion"></div>
         </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTF (CAPTURE THE FLAG) ========== -->
+  <section class="section" id="page-ctf">
+    <div class="ctf-header-area">
+      <div class="section-label">// Practice Arena</div>
+      <h2 class="section-title">Capture The Flag (CTF)</h2>
+      <p class="section-desc">Competitive cybersecurity challenges, tactical offensive testing, and investigative problem-solving designed to reinforce hands-on security skills.</p>
+      <div class="section-divider"></div>
+    </div>
+
+    <!-- Prominent Status / Coming Soon Banner -->
+    <div class="ctf-status-banner">
+      <div class="ctf-banner-header">
+        <div class="ctf-banner-title-wrap">
+          <div class="ctf-banner-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          </div>
+          <h3 class="ctf-banner-title">Challenges Will Be Added Soon</h3>
+        </div>
+        <span class="ctf-banner-badge">Phase 2 Release • Engine In Development</span>
+      </div>
+      <p class="ctf-banner-desc">
+        The CyberM CTF Arena is an upcoming dedicated learning environment where students will apply offensive and defensive techniques against isolated challenge targets. To ensure safety, stability, and fair play, all challenge containers, flag verification engines, automated scoring algorithms, and dynamic leaderboards are currently being built and tested for the upcoming backend phase.
+      </p>
+      <div class="ctf-banner-subnotice">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span>Current Phase: Public Section &amp; Category Preview Only • No active challenges or flag submission required in this phase.</span>
+      </div>
+    </div>
+
+    <!-- Educational: What is CTF? -->
+    <div class="ctf-section-block">
+      <h3 class="ctf-block-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        What is Capture The Flag in Cybersecurity?
+      </h3>
+      <p class="ctf-block-lead">
+        In cybersecurity education, a <strong>Capture The Flag (CTF)</strong> is a gamified simulation where learners solve technical security puzzles to discover a hidden secret token known as a <em>"flag"</em>. Flags are placed inside deliberately vulnerable web applications, encrypted communications, network packet streams, or compiled program binaries. Finding and submitting the flag proves the participant has successfully identified and understood the underlying security flaw.
+      </p>
+
+      <div class="ctf-pillars-grid">
+        <div class="ctf-pillar-card">
+          <div class="ctf-pillar-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <h4>Jeopardy-Style Challenges</h4>
+          <p>Challenges will span distinct domains like Web Exploitation, Cryptography, Forensics, and Reverse Engineering, each offering graduated difficulty levels from beginner to advanced.</p>
+        </div>
+
+        <div class="ctf-pillar-card">
+          <div class="ctf-pillar-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          </div>
+          <h4>Adversarial &amp; Analytical Thinking</h4>
+          <p>CTFs train students to think like both ethical attackers and forensic defenders—analyzing unintended system behaviors, breaking weak controls, and dissecting anomalous payloads.</p>
+        </div>
+
+        <div class="ctf-pillar-card">
+          <div class="ctf-pillar-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h4>Applied Skill Validation</h4>
+          <p>Move beyond passive video watching. CTFs provide the ultimate hands-on proof of skill by requiring direct application of tools and methodologies taught in our 44 courses.</p>
+        </div>
+      </div>
+
+      <div class="ctf-flag-sample-box">
+        <div class="ctf-flag-sample-text">
+          <strong>Standard CyberM Flag Format:</strong> Challenges will reward a verifiable string starting with a platform prefix:
+        </div>
+        <div class="ctf-flag-code">CYBERM{w3lc0m3_t0_ctf_ch4ll3ng3s}</div>
+      </div>
+    </div>
+
+    <!-- Future Categories (Non-functional Preview Cards) -->
+    <div class="ctf-section-block">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <h3 class="ctf-block-title" style="margin-bottom:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Planned CTF Categories
+        </h3>
+        <span class="ctf-preview-pill">Preview Only • No Active Challenges</span>
+      </div>
+      <p class="ctf-block-lead">
+        Preview the technical domains planned for the CyberM CTF release. Each category will feature isolated sandbox environments, gradual difficulty tiers, and comprehensive learning writeups upon challenge completion.
+      </p>
+
+      <div class="ctf-categories-grid">
+        <!-- Web Security Card -->
+        <div class="ctf-category-card">
+          <div>
+            <div class="ctf-category-top">
+              <div class="ctf-category-icon-title">
+                <div class="ctf-category-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+                <div>
+                  <h4 class="ctf-category-title">Web Security</h4>
+                  <span class="ctf-category-level">Beginner &rarr; Advanced</span>
+                </div>
+              </div>
+              <span class="ctf-preview-pill">Preview Only</span>
+            </div>
+            <p class="ctf-category-desc">
+              Audit and exploit simulated web application flaws based on the OWASP Top 10. Learn to identify logic vulnerabilities, bypass broken access controls, and extract sensitive flags from target databases and backend endpoints.
+            </p>
+            <div class="ctf-topics-wrap">
+              <span class="ctf-topics-label">Planned Challenge Scenarios</span>
+              <div class="ctf-topic-tags">
+                <span class="ctf-topic-tag">SQL Injection</span>
+                <span class="ctf-topic-tag">Cross-Site Scripting (XSS)</span>
+                <span class="ctf-topic-tag">SSRF</span>
+                <span class="ctf-topic-tag">IDOR &amp; BAC</span>
+                <span class="ctf-topic-tag">API Token Flaws</span>
+                <span class="ctf-topic-tag">Command Injection</span>
+              </div>
+            </div>
+          </div>
+          <div class="ctf-card-footer">
+            <span class="ctf-card-status-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Challenges In Development
+            </span>
+            <button class="ctf-preview-btn" disabled>Preview Only (Inactive)</button>
+          </div>
+        </div>
+
+        <!-- Cryptography Card -->
+        <div class="ctf-category-card">
+          <div>
+            <div class="ctf-category-top">
+              <div class="ctf-category-icon-title">
+                <div class="ctf-category-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div>
+                  <h4 class="ctf-category-title">Cryptography</h4>
+                  <span class="ctf-category-level">Intermediate &rarr; Advanced</span>
+                </div>
+              </div>
+              <span class="ctf-preview-pill">Preview Only</span>
+            </div>
+            <p class="ctf-category-desc">
+              Decode and break mathematical implementations of cryptographic primitives. Uncover flags protected by flawed key generation, improper padding modes, insecure randomness, and legacy cipher suites.
+            </p>
+            <div class="ctf-topics-wrap">
+              <span class="ctf-topics-label">Planned Challenge Scenarios</span>
+              <div class="ctf-topic-tags">
+                <span class="ctf-topic-tag">Classical Ciphers</span>
+                <span class="ctf-topic-tag">RSA Key Vulnerabilities</span>
+                <span class="ctf-topic-tag">Hash Collisions</span>
+                <span class="ctf-topic-tag">Padding Oracle Attacks</span>
+                <span class="ctf-topic-tag">Diffie-Hellman Flaws</span>
+                <span class="ctf-topic-tag">PRNG Predictability</span>
+              </div>
+            </div>
+          </div>
+          <div class="ctf-card-footer">
+            <span class="ctf-card-status-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Challenges In Development
+            </span>
+            <button class="ctf-preview-btn" disabled>Preview Only (Inactive)</button>
+          </div>
+        </div>
+
+        <!-- Digital Forensics Card -->
+        <div class="ctf-category-card">
+          <div>
+            <div class="ctf-category-top">
+              <div class="ctf-category-icon-title">
+                <div class="ctf-category-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                </div>
+                <div>
+                  <h4 class="ctf-category-title">Digital Forensics</h4>
+                  <span class="ctf-category-level">Beginner &rarr; Advanced</span>
+                </div>
+              </div>
+              <span class="ctf-preview-pill">Preview Only</span>
+            </div>
+            <p class="ctf-category-desc">
+              Investigate digital artifacts to reconstruct attack chains. Analyze raw memory captures, dissect PCAP network traffic streams, inspect corrupted disk images, and extract hidden data using steganographic analysis.
+            </p>
+            <div class="ctf-topics-wrap">
+              <span class="ctf-topics-label">Planned Challenge Scenarios</span>
+              <div class="ctf-topic-tags">
+                <span class="ctf-topic-tag">PCAP Traffic Carving</span>
+                <span class="ctf-topic-tag">Memory Dump Triage</span>
+                <span class="ctf-topic-tag">Disk Image Timelines</span>
+                <span class="ctf-topic-tag">Steganography &amp; LSB</span>
+                <span class="ctf-topic-tag">Windows Event Logs</span>
+                <span class="ctf-topic-tag">File Integrity Analysis</span>
+              </div>
+            </div>
+          </div>
+          <div class="ctf-card-footer">
+            <span class="ctf-card-status-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Challenges In Development
+            </span>
+            <button class="ctf-preview-btn" disabled>Preview Only (Inactive)</button>
+          </div>
+        </div>
+
+        <!-- Reverse Engineering Card -->
+        <div class="ctf-category-card">
+          <div>
+            <div class="ctf-category-top">
+              <div class="ctf-category-icon-title">
+                <div class="ctf-category-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <div>
+                  <h4 class="ctf-category-title">Reverse Engineering</h4>
+                  <span class="ctf-category-level">Intermediate &rarr; Advanced</span>
+                </div>
+              </div>
+              <span class="ctf-preview-pill">Preview Only</span>
+            </div>
+            <p class="ctf-category-desc">
+              Decompile and disassemble compiled executables. Study assembly instruction flows, bypass anti-debugging protections, unpack obfuscated binaries, and reverse license-check routines to expose embedded flags.
+            </p>
+            <div class="ctf-topics-wrap">
+              <span class="ctf-topics-label">Planned Challenge Scenarios</span>
+              <div class="ctf-topic-tags">
+                <span class="ctf-topic-tag">x86/x64 Assembly</span>
+                <span class="ctf-topic-tag">Ghidra / IDA Decompilation</span>
+                <span class="ctf-topic-tag">Binary Patching</span>
+                <span class="ctf-topic-tag">Anti-Debugging Bypass</span>
+                <span class="ctf-topic-tag">Packed Binary Analysis</span>
+                <span class="ctf-topic-tag">Control Flow Flattening</span>
+              </div>
+            </div>
+          </div>
+          <div class="ctf-card-footer">
+            <span class="ctf-card-status-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Challenges In Development
+            </span>
+            <button class="ctf-preview-btn" disabled>Preview Only (Inactive)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preparation: Bridging to Course Curriculum -->
+    <div class="ctf-section-block">
+      <h3 class="ctf-block-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        How to Prepare Today Using CyberM Courses
+      </h3>
+      <p class="ctf-block-lead">
+        While the CTF challenge engine is being developed, build the essential foundational and tool-specific skills required for competitive security through our 44 structured courses.
+      </p>
+
+      <div class="ctf-prep-grid">
+        <div class="ctf-prep-card">
+          <h4>Offensive Security Prep (Red Team Track)</h4>
+          <p>Master the tools and exploitation methodologies needed for Web Security and Reverse Engineering challenges:</p>
+          <div class="ctf-prep-courses-list">
+            <div class="ctf-prep-course-item">
+              <span>Burp Suite Fundamentals &amp; OWASP Testing</span>
+              <button type="button" onclick="navigateTo('courses'); filterCourseTeam('red'); selectCourseTool('burp')">Open Course &rarr;</button>
+            </div>
+            <div class="ctf-prep-course-item">
+              <span>SQLMap &amp; Web Content Discovery (ffuf)</span>
+              <button type="button" onclick="navigateTo('courses'); filterCourseTeam('red'); selectCourseTool('sqlmap')">Open Course &rarr;</button>
+            </div>
+            <div class="ctf-prep-course-item">
+              <span>Nmap Network Discovery &amp; Port Scanning</span>
+              <button type="button" onclick="navigateTo('courses'); filterCourseTeam('red'); selectCourseTool('nmap')">Open Course &rarr;</button>
+            </div>
+            <div class="ctf-prep-course-item">
+              <span>John the Ripper &amp; Hashcat Hash Auditing</span>
+              <button type="button" onclick="navigateTo('courses'); filterCourseTeam('red'); selectCourseTool('hashcat')">Open Course &rarr;</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ctf-prep-card">
+          <h4>Defensive Analysis Prep (Blue Team Track)</h4>
+          <p>Develop forensic inspection and traffic dissection techniques essential for Digital Forensics challenges:</p>
+          <div class="ctf-prep-courses-list">
+            <div class="ctf-prep-course-item">
+              <span>Wireshark Basics &amp; Network Analysis</span>
+              <button type="button" onclick="navigateTo('courses'); filterCourseTeam('blue'); selectCourseTool('wireshark')">Open Course &rarr;</button>
+            </div>
+            <div class="ctf-prep-course-item">
+              <span>Digital Forensics &amp; Timeline Reconstruction</span>
+              <button type="button" onclick="navigateTo('courses'); filterCourseTeam('blue'); selectCourseTool('forensics')">Open Course &rarr;</button>
+            </div>
+            <div class="ctf-prep-course-item">
+              <span>Velociraptor Endpoint Detection &amp; Response</span>
+              <button type="button" onclick="navigateTo('courses'); filterCourseTeam('blue'); selectCourseTool('velociraptor')">Open Course &rarr;</button>
+            </div>
+            <div class="ctf-prep-course-item">
+              <span>Malware Analysis Basics &amp; Sandbox Triage</span>
+              <button type="button" onclick="navigateTo('courses'); filterCourseTeam('blue'); selectCourseTool('malware')">Open Course &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phased Roadmap Timeline -->
+    <div class="ctf-section-block">
+      <h3 class="ctf-block-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        CTF Platform Roadmap
+      </h3>
+      <div class="ctf-timeline-grid">
+        <div class="ctf-timeline-step is-current">
+          <span class="ctf-timeline-phase">Phase 1 • Current</span>
+          <h4>Platform &amp; Curriculum Foundation</h4>
+          <p>44-course curriculum active, tool training paths established, and dedicated CTF top-level section released with category specifications.</p>
+        </div>
+        <div class="ctf-timeline-step">
+          <span class="ctf-timeline-phase">Phase 2 • Upcoming</span>
+          <h4>Challenge Engine &amp; Sandboxes</h4>
+          <p>Isolated Docker containers for Web, Crypto, Forensics, and Reversing. Dynamic flag generation, hints, and automated scoring validation.</p>
+        </div>
+        <div class="ctf-timeline-step">
+          <span class="ctf-timeline-phase">Phase 3 • Future</span>
+          <h4>Competitions &amp; Leaderboards</h4>
+          <p>Timed community CTF events, real-time scoreboards, team collaboration arenas, and verifiable skill credential badges.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Responsible Use & Ethics Box -->
+    <div class="ctf-ethics-box">
+      <div class="ctf-ethics-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+      </div>
+      <div>
+        <h4 class="ctf-ethics-title">Responsible Learning &amp; Ethics Notice</h4>
+        <p class="ctf-ethics-desc">
+          Capture The Flag challenges on CyberM are designed strictly for educational, defensive, and authorized research purposes. All techniques must be practiced exclusively within designated, isolated lab environments. Applying offensive methods against unauthorized networks or systems is strictly prohibited and illegal.
+        </p>
       </div>
     </div>
   </section>
