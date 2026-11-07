@@ -46,6 +46,8 @@ function setupLogout() {
 
 /* ========== TEAM TABS — ROADMAPS ========== */
 function updateRoadmapTeamTabsUI() {
+  const pageRoadmap = document.getElementById('page-roadmap');
+  if (pageRoadmap) pageRoadmap.setAttribute('data-team-mode', currentRoadmapTeam);
   document.querySelectorAll('#roadmapTeamTabs .team-tab').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-team') === currentRoadmapTeam);
   });
@@ -153,6 +155,8 @@ function switchRoadmap(roadmapId) {
 
 /* ========== TEAM TABS — COURSES ========== */
 function updateCourseTeamTabsUI() {
+  const pageCourses = document.getElementById('page-courses');
+  if (pageCourses) pageCourses.setAttribute('data-team-mode', currentCourseTeam);
   document.querySelectorAll('#courseTeamTabs .team-tab').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-team') === currentCourseTeam);
   });
@@ -262,11 +266,13 @@ function renderCourseContent() {
     container.innerHTML = '<p class="no-results">Course not found.</p>';
     return;
   }
+  const pageCourses = document.getElementById('page-courses');
+  if (pageCourses) pageCourses.setAttribute('data-team-mode', course.team);
   const totalLessons = course.modules.reduce((s, m) => s + m.lessons.length, 0);
   const subscribed = window.CyberAuth && window.CyberAuth.isSubscribedTo(course.id);
 
   container.innerHTML = `
-    <div class="course-header-card">
+    <div class="course-header-card" data-team="${course.team}">
       <div class="course-header-left">
         <div class="course-tool-icon-lg">${course.icon}</div>
         <div>
@@ -417,7 +423,9 @@ function enrollCourse(courseId) {
 
   document.getElementById('courseLandingView').style.display = 'none';
   document.getElementById('courseTeamTabs').style.display = 'none'; // change3: hide Red/Blue tabs inside LMS
-  document.getElementById('lmsView').style.display = 'block';
+  const lmsView = document.getElementById('lmsView');
+  lmsView.style.display = 'block';
+  lmsView.setAttribute('data-team', course.team);
 
   renderLms();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -425,7 +433,9 @@ function enrollCourse(courseId) {
 
 function exitLms() {
   if (currentLmsCourseId) saveCompletedLessons(currentLmsCourseId, lmsCompletedLessons);
-  document.getElementById('lmsView').style.display = 'none';
+  const lmsView = document.getElementById('lmsView');
+  lmsView.style.display = 'none';
+  lmsView.removeAttribute('data-team');
   document.getElementById('courseLandingView').style.display = 'block';
   document.getElementById('courseTeamTabs').style.display = '';
   renderCourseContent();
@@ -439,6 +449,9 @@ function renderLms() {
     exitLms();
     return;
   }
+
+  const lmsView = document.getElementById('lmsView');
+  if (lmsView) lmsView.setAttribute('data-team', course.team);
 
   document.getElementById('lmsTopbarTitle').textContent = course.name;
 

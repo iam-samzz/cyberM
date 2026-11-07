@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Job Assistance — USA, UK & Canada | cyberM</title>
+
+  <script>
+    // Apply saved theme immediately before render
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem("cyberM_theme") || localStorage.getItem("cybermTheme") || "dark";
+        document.documentElement.setAttribute("data-theme", savedTheme === "light" ? "light" : "dark");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-400-normal.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="job-page-wrap">
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html" id="brandLink">
+        <img id="brandLogo" src="assets/logo-dark-theme.png" alt="cyberM Logo" class="brand-logo"
+             data-logo-dark="assets/logo-dark-theme.png" data-logo-light="assets/logo-light-theme.png">
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html" id="navHome">Home</a>
+        <a href="dashboard.html#courses">Courses</a>
+        <a href="ctf.html">CTF</a>
+        <a class="active" href="job-assistance.html">Job Assistance</a>
+        <a href="dashboard.html#resources">Resources</a>
+        <a href="dashboard.html#roadmap">Roadmap</a>
+        <a href="dashboard.html#about">About</a>
+        <a href="#contact-section">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a class="btn btn-primary" id="navAuthAction" href="login.html" style="font-size:0.8rem; padding:8px 16px;">
+          Workspace &nearrow;
+        </a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Job Assistance Container -->
+  <main class="job-main-container">
+
+    <!-- Hero Section -->
+    <section class="job-hero">
+      <div class="job-hero-kicker-wrap">
+        <span class="hero-badge" style="margin-bottom:0;"><span class="dot"></span> Global Career Support</span>
+        <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted);">// CAREER &amp; JOB SEARCH ASSISTANCE</span>
+      </div>
+      <h1 class="section-title" style="font-size:2.4rem; margin-top:14px; margin-bottom:12px;">
+        Global Career Support for Cyber Security Professionals
+      </h1>
+      <p class="section-desc" style="max-width:780px;">
+        Get expert guidance, resume support, interview preparation and job search assistance for top countries. Designed to help students, career changers, and practicing defenders land meaningful cybersecurity positions worldwide.
+      </p>
+
+      <div class="job-country-chips">
+        <a href="#country-usa" class="job-country-chip">
+          <span style="font-size:1.1rem;">🇺🇸</span> United States Opportunities
+        </a>
+        <a href="#country-uk" class="job-country-chip">
+          <span style="font-size:1.1rem;">🇬🇧</span> United Kingdom Opportunities
+        </a>
+        <a href="#country-canada" class="job-country-chip">
+          <span style="font-size:1.1rem;">🇨🇦</span> Canada Opportunities
+        </a>
+      </div>
+
+      <div class="section-divider" style="margin-top:28px;"></div>
+    </section>
+
+    <!-- Services Overview -->
+    <section class="ctf-section-block">
+      <div style="margin-bottom:24px;">
+        <span class="section-kicker">01 / OUR SERVICES</span>
+        <h2 class="ctf-block-title">Career &amp; Job Search Support Offerings</h2>
+        <p class="ctf-block-lead">
+          CyberM combines technical skill-building with strategic career mentorship to prepare you for competitive global hiring pipelines.
+        </p>
+      </div>
+
+      <div class="job-services-grid">
+        <!-- Service 1 -->
+        <div class="job-service-card">
+          <div class="job-service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <h3 class="job-service-title">CV &amp; Resume Guidance</h3>
+          <p class="job-service-desc">
+            Transform technical coursework and lab exercises into an ATS-compliant, recruiter-ready resume that highlights practical cybersecurity tradecraft.
+          </p>
+          <ul class="job-service-points">
+            <li>ATS keyword alignment for security roles</li>
+            <li>Translating lab and tool practice into quantifiable outcomes</li>
+            <li>Country-specific formatting (US 1-page vs UK 2-page CV)</li>
+          </ul>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="job-service-card">
+          <div class="job-service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </div>
+          <h3 class="job-service-title">LinkedIn &amp; Profile Guidance</h3>
+          <p class="job-service-desc">
+            Optimize your professional presence across LinkedIn and GitHub to attract direct inquiries from technical cybersecurity recruiters.
+          </p>
+          <ul class="job-service-points">
+            <li>Strategic headline, summary and skill tagging</li>
+            <li>Documenting lab writeups and CTF walkthroughs</li>
+            <li>Networking etiquette with hiring managers and peers</li>
+          </ul>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="job-service-card">
+          <div class="job-service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 class="job-service-title">Interview Preparation</h3>
+          <p class="job-service-desc">
+            Prepare for both technical grilling and scenario-based behavioral screenings through structured mock sessions and question frameworks.
+          </p>
+          <ul class="job-service-points">
+            <li>SOC triage, packet analysis, and incident questions</li>
+            <li>Explaining OWASP vulnerabilities and remediation</li>
+            <li>STAR-method coaching for behavioral interviews</li>
+          </ul>
+        </div>
+
+        <!-- Service 4 -->
+        <div class="job-service-card">
+          <div class="job-service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3 class="job-service-title">Career Guidance &amp; Pathing</h3>
+          <p class="job-service-desc">
+            Navigate the cybersecurity landscape with a personalized development plan aligned with your background, strengths, and target specialization.
+          </p>
+          <ul class="job-service-points">
+            <li>Offensive (Red) vs Defensive (Blue) vs GRC paths</li>
+            <li>Industry certification roadmap recommendations</li>
+            <li>Transition strategies from IT, networking, or non-tech roles</li>
+          </ul>
+        </div>
+
+        <!-- Service 5 -->
+        <div class="job-service-card">
+          <div class="job-service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3 class="job-service-title">Job-Search Support</h3>
+          <p class="job-service-desc">
+            Learn modern job-hunting strategies to identify legitimate openings, avoid ghost postings, and apply with high-signal submissions.
+          </p>
+          <ul class="job-service-points">
+            <li>Curated navigation of regional tech job boards</li>
+            <li>Targeted application techniques to beat applicant fatigue</li>
+            <li>Understanding job descriptions and salary benchmarks</li>
+          </ul>
+        </div>
+
+        <!-- Service 6 / Curriculum Bridge -->
+        <div class="job-service-card" style="background: linear-gradient(135deg, rgba(74, 143, 231, 0.08), rgba(124, 92, 231, 0.08)); border-color: var(--accent-border);">
+          <div class="job-service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          </div>
+          <h3 class="job-service-title">44 Practical Courses</h3>
+          <p class="job-service-desc">
+            Every career application is backed by CyberM's complete 44-course curriculum covering real-world tools, defensive triage, and offensive analysis.
+          </p>
+          <ul class="job-service-points">
+            <li>21 Red Team Courses (Nmap, Burp Suite, Metasploit, SQLMap)</li>
+            <li>23 Blue Team Courses (Splunk, Wazuh, Zeek, Velociraptor)</li>
+            <li>313 structured class-wise topics and worksheets</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Country-Specific Sections: USA, UK, Canada -->
+    <section class="ctf-section-block">
+      <div style="margin-bottom:24px;">
+        <span class="section-kicker">02 / TARGET REGIONS</span>
+        <h2 class="ctf-block-title">Country-Specific Career Information</h2>
+        <p class="ctf-block-lead">
+          Cybersecurity hiring requirements, certification preferences, and regulatory standards differ significantly by country. Review key market details below:
+        </p>
+      </div>
+
+      <div class="job-countries-grid">
+        <!-- USA Section -->
+        <div class="job-country-card" id="country-usa">
+          <div class="job-country-header">
+            <div class="job-country-flag-title">
+              <span class="job-country-flag">🇺🇸</span>
+              <div>
+                <h3 class="job-country-name">United States</h3>
+                <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">North America</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Market Dynamics</div>
+            <div class="job-country-block-val">
+              Large enterprise SOC ecosystems, defense industrial base, and technology sectors. High emphasis on hands-on tool verification and SIEM monitoring capabilities.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Primary Frameworks</div>
+            <div class="job-country-block-val">
+              NIST CSF, NIST SP 800-53, CMMC, DoD 8140 / 8570 baseline compliance.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Commonly Referenced Certifications (Role-Dependent)</div>
+            <div class="job-country-block-val">
+              Frequently cited certifications include CompTIA Security+, CySA+, CEH, CISSP, and cloud credentials (AWS / Azure Security). Specific requirements vary by employer and role; certifications are not universally mandatory.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Target Roles</div>
+            <div class="job-country-roles">
+              <span class="job-role-badge">SOC Analyst (Tier 1/2)</span>
+              <span class="job-role-badge">Vulnerability Analyst</span>
+              <span class="job-role-badge">Jr. Penetration Tester</span>
+              <span class="job-role-badge">Security Operations</span>
+            </div>
+          </div>
+
+          <div class="job-country-block" style="margin-top:auto; padding-top:12px; border-top:1px solid var(--border-light);">
+            <div class="job-country-block-label">Resume Guidance</div>
+            <div class="job-country-block-val" style="font-size:0.8rem; color:var(--text-muted);">
+              Strict 1-page concise format, bullet points highlighting impact and tools, ATS keyword scanning compatibility.
+            </div>
+          </div>
+        </div>
+
+        <!-- UK Section -->
+        <div class="job-country-card" id="country-uk">
+          <div class="job-country-header">
+            <div class="job-country-flag-title">
+              <span class="job-country-flag">🇬🇧</span>
+              <div>
+                <h3 class="job-country-name">United Kingdom</h3>
+                <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">Europe</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Market Dynamics</div>
+            <div class="job-country-block-val">
+              Concentrated financial services in London/Edinburgh, healthcare (NHS), and critical national infrastructure. Strong focus on compliance and accredited testing.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Primary Frameworks</div>
+            <div class="job-country-block-val">
+              NCSC Cyber Essentials, ISO/IEC 27001, NIS Directive, UK Data Protection Act / GDPR.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Common Industry Accreditations &amp; Standards</div>
+            <div class="job-country-block-val">
+              Recognized accreditations include CREST (CPSPE, CRT), CompTIA Security+, SSCP, CISM, and CyBOK alignment. Not all roles require certification; practical ability is widely assessed.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Target Roles</div>
+            <div class="job-country-roles">
+              <span class="job-role-badge">Cyber Defense Analyst</span>
+              <span class="job-role-badge">Information Security Officer</span>
+              <span class="job-role-badge">Incident Response Analyst</span>
+              <span class="job-role-badge">Security Consultant</span>
+            </div>
+          </div>
+
+          <div class="job-country-block" style="margin-top:auto; padding-top:12px; border-top:1px solid var(--border-light);">
+            <div class="job-country-block-label">Resume Guidance</div>
+            <div class="job-country-block-val" style="font-size:0.8rem; color:var(--text-muted);">
+              2-page detailed CV including a clear personal statement, core technical competencies table, and education credentials.
+            </div>
+          </div>
+        </div>
+
+        <!-- Canada Section -->
+        <div class="job-country-card" id="country-canada">
+          <div class="job-country-header">
+            <div class="job-country-flag-title">
+              <span class="job-country-flag">🇨🇦</span>
+              <div>
+                <h3 class="job-country-name">Canada</h3>
+                <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">North America</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Market Dynamics</div>
+            <div class="job-country-block-val">
+              Flourishing security tech centers in Toronto, Vancouver, Montreal, and Ottawa. Significant banking and telecommunications security investments.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Primary Frameworks</div>
+            <div class="job-country-block-val">
+              PIPEDA, CCCS (Canadian Centre for Cyber Security) ITSG-33, SOC 2, ISO 27001.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Common Industry Certifications &amp; Credentials</div>
+            <div class="job-country-block-val">
+              Frequently valued credentials include CompTIA Security+, GIAC GSEC / GCIH, CISSP, and CCSP. Certification expectations vary based on specialization and organization size.
+            </div>
+          </div>
+
+          <div class="job-country-block">
+            <div class="job-country-block-label">Target Roles</div>
+            <div class="job-country-roles">
+              <span class="job-role-badge">SOC Analyst</span>
+              <span class="job-role-badge">Cloud Security Specialist</span>
+              <span class="job-role-badge">Cyber Risk Analyst</span>
+              <span class="job-role-badge">IT Security Admin</span>
+            </div>
+          </div>
+
+          <div class="job-country-block" style="margin-top:auto; padding-top:12px; border-top:1px solid var(--border-light);">
+            <div class="job-country-block-label">Resume Guidance</div>
+            <div class="job-country-block-val" style="font-size:0.8rem; color:var(--text-muted);">
+              Standard 2-page chronological format without photos, emphasizing privacy compliance and hands-on lab demonstration.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Us & Inquiry Section -->
+    <section class="ctf-section-block" id="contact-section">
+      <div style="margin-bottom:24px;">
+        <span class="section-kicker">03 / GET IN TOUCH</span>
+        <h2 class="ctf-block-title">Contact Our Career Guidance Team</h2>
+        <p class="ctf-block-lead">
+          Have questions about country-specific requirements, resume assistance, or your cybersecurity path? Connect with our career advisors below.
+        </p>
+      </div>
+
+      <div class="job-contact-wrap">
+        <!-- Contact Details (Placeholders awaiting owner inputs) -->
+        <div class="job-contact-info">
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+              Contact Details
+            </h3>
+            <p style="font-size:0.86rem; color:var(--text-secondary); line-height:1.55; margin-bottom:24px;">
+              Reach out directly to learn more about our CV reviews, interview coaching sessions, and global job search workflows.
+            </p>
+
+            <div class="job-contact-item">
+              <div class="job-contact-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <div class="job-contact-item-title">Official Email</div>
+                <div class="job-contact-item-val">Awaiting owner confirmation.</div>
+              </div>
+            </div>
+
+            <div class="job-contact-item">
+              <div class="job-contact-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div>
+                <div class="job-contact-item-title">Phone / WhatsApp</div>
+                <div class="job-contact-item-val">Awaiting owner confirmation.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:0.78rem; font-family:var(--font-mono); color:var(--text-muted); background:var(--bg-tertiary); padding:10px 14px; border-radius:6px;">
+            ℹ Note: Official phone, WhatsApp, and email contact channels are pending owner confirmation and will be published upon launch.
+          </div>
+        </div>
+
+        <!-- Career Support Inquiry Form (Frontend Only) -->
+        <div class="job-form-wrapper">
+          <h3 style="font-size:1.25rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+            Send an Inquiry
+          </h3>
+          <p style="font-size:0.86rem; color:var(--text-secondary); line-height:1.55; margin-bottom:20px;">
+            Fill out your details below to request resume feedback, interview guidance, or country-specific career assistance.
+          </p>
+
+          <form id="careerInquiryForm" class="job-form">
+            <div class="job-form-row">
+              <div class="job-form-group">
+                <label for="careerName">Full Name *</label>
+                <input type="text" id="careerName" name="name" placeholder="Alex Morgan" required>
+              </div>
+              <div class="job-form-group">
+                <label for="careerEmail">Email Address *</label>
+                <input type="email" id="careerEmail" name="email" placeholder="alex@example.com" required>
+              </div>
+            </div>
+
+            <div class="job-form-row">
+              <div class="job-form-group">
+                <label for="careerCountry">Country of Interest *</label>
+                <select id="careerCountry" name="country" required>
+                  <option value="usa">United States (USA)</option>
+                  <option value="uk">United Kingdom (UK)</option>
+                  <option value="canada">Canada</option>
+                  <option value="other">Other Global Tech Markets</option>
+                </select>
+              </div>
+              <div class="job-form-group">
+                <label for="careerService">Service Requested *</label>
+                <select id="careerService" name="service" required>
+                  <option value="resume">CV &amp; Resume Guidance</option>
+                  <option value="linkedin">LinkedIn &amp; Profile Optimization</option>
+                  <option value="interview">Interview Preparation</option>
+                  <option value="career-guidance">Career Guidance &amp; Pathing</option>
+                  <option value="job-search">Job-Search Strategy</option>
+                  <option value="general">General Career Inquiry</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="job-form-group">
+              <label for="careerMessage">Current Background &amp; Goals</label>
+              <textarea id="careerMessage" name="message" rows="4" placeholder="Briefly describe your current experience level (e.g. beginner, IT transition, student) and the specific guidance you are looking for..."></textarea>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button type="submit" class="btn btn-primary" style="padding:12px 24px; font-weight:600; width:fit-content;">
+                Submit Career Inquiry &rarr;
+              </button>
+              <div class="job-form-demo-notice" style="font-size:0.8rem; color:var(--text-muted); font-family:var(--font-mono); line-height:1.5;">
+                Demo form: Your information is not currently transmitted or sent to CyberM. Inquiry submission will be enabled in a future release.
+              </div>
+            </div>
+
+            <div id="careerFormFeedback" class="job-form-feedback">
+              Frontend demonstration mode: This form is a frontend demonstration only. No information was transmitted or sent to CyberM. Inquiry submission will be enabled in a future release.
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mandatory Ethical Disclaimer Notice -->
+    <section class="job-disclaimer-box">
+      <div class="job-disclaimer-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Notice &amp; Disclaimer Regarding Career Support</span>
+      </div>
+      <p class="job-disclaimer-text">
+        CyberM provides educational mentorship, skill training, resume reviews, interview coaching, and career guidance. CyberM does <strong>NOT</strong> provide guaranteed employment, job placements, visas, or employer sponsorships. Hiring decisions, salary terms, and employment eligibility are determined exclusively by independent third-party employers and government regulatory bodies.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="ctf-standalone-footer">
+    <div>
+      <span>&copy; 2026 CyberM. Learn responsibly. Practice ethically.</span>
+    </div>
+    <div style="display:flex; gap:18px;">
+      <a href="index.html">Landing Page</a>
+      <a href="dashboard.html">Learning Dashboard</a>
+      <a href="dashboard.html#courses">44 Courses</a>
+      <a href="ctf.html">CTF Arena</a>
+      <a href="#contact-section">Contact Us</a>
+    </div>
+  </footer>
+
+  <script src="js/users.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Theme Toggle
+      const themeToggleBtn = document.getElementById('themeToggle');
+      const brandLogo = document.getElementById('brandLogo');
+
+      function syncTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try {
+          localStorage.setItem('cyberM_theme', theme);
+          localStorage.setItem('cybermTheme', theme);
+        } catch (e) {}
+
+        if (brandLogo) {
+          const darkLogo = brandLogo.getAttribute('data-logo-dark');
+          const lightLogo = brandLogo.getAttribute('data-logo-light');
+          brandLogo.src = theme === 'dark' ? darkLogo : lightLogo;
+        }
+
+        if (themeToggleBtn) {
+          if (theme === 'dark') {
+            themeToggleBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+          } else {
+            themeToggleBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+          }
+        }
+      }
+
+      let activeTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      syncTheme(activeTheme);
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+          activeTheme = activeTheme === 'dark' ? 'light' : 'dark';
+          syncTheme(activeTheme);
+        });
+      }
+
+      // Mobile Menu Hamburger Toggle
+      const hamburger = document.getElementById('hamburger');
+      const navLinks = document.getElementById('navLinks');
+      if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+          hamburger.classList.toggle('active');
+          navLinks.classList.toggle('open');
+        });
+      }
+
+      // Auth Action Button Sync
+      const authBtn = document.getElementById('navAuthAction');
+      const brandLink = document.getElementById('brandLink');
+      const navHome = document.getElementById('navHome');
+      if (window.CyberAuth && window.CyberAuth.isLoggedIn()) {
+        if (authBtn) {
+          authBtn.textContent = 'Open Workspace →';
+          authBtn.href = 'dashboard.html';
+        }
+        if (brandLink) brandLink.href = 'dashboard.html';
+        if (navHome) navHome.href = 'dashboard.html';
+      } else {
+        if (authBtn) {
+          authBtn.textContent = 'Log in →';
+          authBtn.href = 'login.html';
+        }
+      }
+
+      // Career Inquiry Form Client-Side Handler
+      const careerForm = document.getElementById('careerInquiryForm');
+      const formFeedback = document.getElementById('careerFormFeedback');
+      if (careerForm && formFeedback) {
+        careerForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          formFeedback.classList.add('success');
+          careerForm.reset();
+          setTimeout(() => {
+            formFeedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 100);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
